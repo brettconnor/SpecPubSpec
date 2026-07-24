@@ -1,0 +1,91 @@
+name: Governance Check
+
+on:
+  push:
+    paths:
+      - 'AGENTS.md'
+      - 'docs/seed-doc.md'
+      - '.github/workflows/governance-check.yml'
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - 'docs/seed-doc.md'
+      - '.github/workflows/governance-check.yml'
+
+env:
+  POLICY_PLANE_URL: https://github.com/brettcon/sdo-policy.git
+  POLICY_PLANE_REF: main
+
+jobs:
+  governance-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read governance source configuration
+        id: gov-source
+        run: |
+          policy_url="${POLICY_PLANE_URL:-}"
+          policy_ref="${POLICY_PLANE_REF:-}"
+          if [ -z "${policy_url}" ] || [ -z "${policy_ref}" ]; then
+            echo "ERROR: missing required POLICY_PLANE_URL or POLICY_PLANE_REF workflow env" >&2
+            exit 1
+          fi
+          echo "url=${policy_url}" >> "$GITHUB_OUTPUT"
+          echo "ref=${policy_ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch governance specifications
+        run: |
+          git clone --depth=1 --branch "${{ steps.gov-source.outputs.ref }}" \
+            "${{ steps.gov-source.outputs.url }}" /tmp/policy-plane
+
+      - name: Validate required governance artifacts
+        run: |
+          fail=0
+          for artifact in \
+            AGENTS.md \
+            docs/seed-doc.md \
+            .github/CODEOWNERS \
+            .github/workflows/governance-check.yml; do
+            if [ ! -e "$artifact" ]; then
+              echo "FAIL: missing required artifact: $artifact" >&2
+              fail=1
+            fi
+          done
+          [ "$fail" -eq 0 ] || exit 1
+
+      - name: Validate no symlinks in governed primitives
+        run: |
+          fail=0
+          for path in \
+            AGENTS.md \
+            docs/seed-doc.md; do
+            if [ -L "$path" ]; then
+              echo "FAIL: symlink prohibited: $path" >&2
+              fail=1
+            fi
+          done
+          [ "$fail" -eq 0 ] || exit 1
+
+      - name: Validate governed primitive frontmatter and sections
+        run: |
+          fail=0
+
+          check_section() {
+            local file="$1" section="$2"
+            grep -qF "$section" "$file" || {
+              echo "FAIL: $file missing required section: $section" >&2
+              fail=1
+            }
+          }
+
+          # docs/seed-doc.md (sole canonical governed document): checks for
+          # required prose sections, not YAML frontmatter -- this document
+          # is plain markdown by design (see AGENTS.md's Markdown Authoring
+          # Rules), it does not use frontmatter fields.
+          if [ -f docs/seed-doc.md ]; then
+            check_section docs/seed-doc.md "## Version"
+          fi
+
+          [ "$fail" -eq 0 ] || exit 1
