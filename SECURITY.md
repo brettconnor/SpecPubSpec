@@ -1,6 +1,6 @@
 # Security Policies and Procedures
 
-This document outlines security procedures and general policies for the spechub project.
+This document outlines security procedures and general policies for the specpubspec project.
 
 - [Reporting a Bug](#reporting-a-bug)
 - [Disclosure Policy](#disclosure-policy)
@@ -8,11 +8,11 @@ This document outlines security procedures and general policies for the spechub 
 
 ## Reporting a Bug
 
-The spechub team and community take all security bugs in spechub seriously.
-Thank you for improving the security of spechub.
+The specpubspec team and community take all security bugs in specpubspec seriously.
+Thank you for improving the security of specpubspec.
 We appreciate your efforts and responsible disclosure and will make every effort to acknowledge your contributions.
 
-Report security bugs by using [GitHub's private vulnerability reporting](https://github.com/brettconnor/spechub/security/advisories).
+Report security bugs by using [GitHub's private vulnerability reporting](https://github.com/your-org/specpubspec/security/advisories).
 
 The maintainers will acknowledge your report within 48 hours, and will send a more detailed response within 48 hours indicating the next steps in handling your report.
 After the initial reply to your report, the security team will endeavor to keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.

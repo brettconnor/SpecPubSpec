@@ -1,6 +1,6 @@
 # How to Contribute
 
-Thanks for your interest in contributing to spechub.
+Thanks for your interest in contributing to specpubspec.
 Here are a few general guidelines on contributing and reporting bugs that we ask you to review.
 Following these guidelines helps to communicate that you respect the time of the contributors managing and developing this open source project.
 In return, they should reciprocate that respect in addressing your issue, assessing changes, and helping you finalize your pull requests.
@@ -11,7 +11,7 @@ This includes creation of issues or pull requests, commenting on issues or pull 
 
 ## Reporting Issues
 
-Before reporting a new issue, please ensure that the issue was not already reported or fixed by searching through our [issues list](https://github.com/brettconnor/spechub/issues).
+Before reporting a new issue, please ensure that the issue was not already reported or fixed by searching through our [issues list](https://github.com/your-org/specpubspec/issues).
 
 When creating a new issue, please be sure to include a **title and clear description**, as much relevant information as possible, and, if possible, a test case.
 
@@ -26,14 +26,14 @@ We expect new pull requests to include tests for any affected behavior, and, as 
 
 ## Other Ways to Contribute
 
-We welcome anyone that wants to contribute to spechub to triage and reply to open issues to help troubleshoot and fix existing bugs.
+We welcome anyone that wants to contribute to specpubspec to triage and reply to open issues to help troubleshoot and fix existing bugs.
 Here is what you can do:
 
 - Help ensure that existing issues follow the recommendations from the [Reporting Issues](#reporting-issues) section, providing feedback to the issue author's description when something is missing.
-- Review and update the existing content of our [Wiki](https://github.com/brettconnor/spechub/wiki) with up-to-date instructions and code samples.
-- Review existing pull requests, and test patches against real existing applications that use spechub.
+- Review and update the existing content of our [Wiki](https://github.com/your-org/specpubspec/wiki) with up-to-date instructions and code samples.
+- Review existing pull requests, and test patches against real existing applications that use specpubspec.
 - Write a test, or add a missing test case to an existing test.
 
-Thanks again for your interest in contributing to spechub!
+Thanks again for your interest in contributing to specpubspec!
 
 :heart:

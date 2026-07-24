@@ -1,6 +1,7 @@
 # site/
 
-This is the static, self-hosted website for this repository (`spechub`), built with Next.js 14 (App Router, `output: 'export'`).
+This is the static, self-hosted website for this repository (`specpubspec`), built with Next.js 14 (App Router, `output: 'export'`).
+The project name expands to Agentic Specification Publication Specification.
 
 ## What this is
 

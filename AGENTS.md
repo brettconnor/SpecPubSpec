@@ -21,7 +21,7 @@ There is exactly one copy of every canonical document; the website is a renderin
 ## Dev Environment Tips
 
 - **spec-kit CLI**: installed via `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git`.
-  `.github/agents/`, `.github/prompts/`, and `.specify/` (the generated `/speckit.*` command stubs and the CLI tooling itself) were all removed in the spechub-easy cleanup once feature `001-dual-purpose-spec-site` shipped.
+  `.github/agents/`, `.github/prompts/`, and `.specify/` (the generated `/speckit.*` command stubs and the CLI tooling itself) were all removed in the specpubspec-easy cleanup once feature `001-dual-purpose-spec-site` shipped.
   Run `specify init --here --force --integration copilot` to regenerate `.github/agents/` and `.github/prompts/` only if the `/speckit.*` workflow is needed again for a future feature.
 - **Site build**: Node.js 20 LTS; see `site/README.md` for the exact install/build/verify commands.
 

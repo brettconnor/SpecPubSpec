@@ -13,7 +13,7 @@ on:
       - '.github/workflows/governance-check.yml'
 
 env:
-  POLICY_PLANE_URL: https://github.com/brettcon/sdo-policy.git
+  POLICY_PLANE_URL: https://github.com/your-org/sdo-policy.git
   POLICY_PLANE_REF: main
 
 jobs:

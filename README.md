@@ -2,7 +2,7 @@ seed-doc.md
 
 This site's duel-purpose renders this repository's canonical document directly from its markdown source.
 
-`spechub` is a dual-purpose specification and documentation repository.
+`specpubspec` is a dual-purpose specification and documentation repository for the Agentic Specification Publication Specification.
 The same canonical markdown files are simultaneously:
 
 - **The source of truth** that coding agents and humans read directly from the repo to understand governing rules, requirements, and design.
