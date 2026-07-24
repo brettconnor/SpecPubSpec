@@ -4,7 +4,10 @@ name: Publish site
 # No other branch or tag triggers a deploy.
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - spechub-easy/default-main-202607221905z
+  workflow_dispatch:
 
 permissions:
   contents: read

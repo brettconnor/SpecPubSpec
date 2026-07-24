@@ -37,6 +37,10 @@ jobs:
 
       - name: Fetch governance specifications
         run: |
+          if [ "${{ steps.gov-source.outputs.url }}" = "https://github.com/your-org/sdo-policy.git" ]; then
+            echo "Skipping governance policy clone because POLICY_PLANE_URL is still a template placeholder." >&2
+            exit 0
+          fi
           git clone --depth=1 --branch "${{ steps.gov-source.outputs.ref }}" \
             "${{ steps.gov-source.outputs.url }}" /tmp/policy-plane
 
