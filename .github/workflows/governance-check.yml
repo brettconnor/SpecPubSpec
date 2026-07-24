@@ -19,6 +19,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Validate SpecPubSpec structure conformance
+        run: bash site/scripts/validate-structure.sh
+
       - name: Validate required governance artifacts
         run: |
           fail=0
