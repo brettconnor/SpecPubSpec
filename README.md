@@ -1,47 +1,165 @@
-# specpubspec
+<!-- GENERATED FILE: do not edit directly. -->
+<!-- Source of truth: docs/seed-doc.md -->
+<!-- Regenerate with: scripts/sync-readme.sh -->
+<!-- Repository orientation, build, and contribution instructions: QUICKSTART.md -->
 
-This site's dual-purpose design renders this repository's canonical document directly from its markdown source.
+# Agentic Specification Publication Specification
 
-`specpubspec` is a dual-purpose specification and documentation repository for the Agentic Specification Publication Specification.
-The same canonical markdown files are simultaneously:
+Version: 1.0.0.
+Status: Standard.
+Date: 2026-07-24.
 
-- **The source of truth** that coding agents and humans read directly from the repo to understand governing rules, requirements, and design.
-- **A self-hosted website** that renders those same files for browsing, with no separate copy to keep in sync.
+## Abstract
 
-There is exactly one copy of every canonical document; the website is a rendering of the repo, never a parallel content store.
+This document specifies SpecPubSpec, a repository pattern for publishing specifications that are simultaneously machine-readable by coding agents and human-browsable as rendered documentation.
+A SpecPubSpec-conformant repository has exactly one canonical source of truth and prevents content drift between source and site.
 
-## Canonical document
+## Conformance
 
-| Document | Path | Rendered at |
+The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+A repository conforms to this specification only if it satisfies REQ-001 through REQ-027 and passes the validation contract in section 6.
+
+---
+
+## Core
+
+### Purpose
+
+SpecPubSpec defines a dual-purpose repository model in which the same canonical markdown source serves agents and humans.
+
+### Principles
+
+1. Single source of truth: canonical documents exist once and are rendered without duplication.
+2. Dual-purpose delivery: source is directly agent-readable and site-rendered for humans.
+3. Self-hosting: the repository contains all artifacts required to build and publish rendered output.
+4. Atomic publication: validation failures block publication completely.
+5. Agent-first authoring: canonical markdown follows deterministic formatting rules defined in AGENTS.md.
+
+## Normative Requirements
+
+### Canonical Document
+
+REQ-001: The repository MUST contain a file at path `docs/seed-doc.md`.
+REQ-002: The file `docs/seed-doc.md` SHALL be the sole canonical specification document.
+REQ-003: The canonical document MUST NOT be a symbolic link.
+
+### Content Unification
+
+REQ-004: The `site/` generation directory MUST NOT contain copies of canonical documents.
+REQ-005: The site generator MUST read canonical documents directly from repository paths at build time.
+REQ-006: Directories named `site/content/` and `site/docs/` MUST NOT exist.
+
+### Repository Metadata
+
+REQ-007: The repository MUST contain `AGENTS.md` at repository root.
+REQ-008: `AGENTS.md` MUST document repository structure and markdown authoring rules.
+REQ-009: The repository MUST contain `README.md` at repository root describing the dual-purpose model.
+
+### Static Site Generation
+
+REQ-010: The repository MUST include a static site generator in `site/`.
+REQ-011: The site generator MUST render canonical documents without manual content copying.
+REQ-012: `site/lib/content.ts` MUST exist and define `CANONICAL_SOURCE_PATHS`.
+REQ-013: `CANONICAL_SOURCE_PATHS` MUST reference `docs/seed-doc.md`.
+
+### Validation
+
+REQ-014: `site/scripts/validate-content.mjs` MUST exist.
+REQ-015: Content validation MUST execute before site generation.
+REQ-016: Build MUST fail if a canonical document is missing or malformed.
+REQ-017: `site/scripts/validate-structure.sh` MUST exist and be executable.
+REQ-018: Structure validation MUST return exit code 0 on conformance and non-zero on violation.
+
+### Continuous Integration
+
+REQ-019: `.github/workflows/publish-site.yml` MUST exist.
+REQ-020: Publish workflow MUST trigger generation and deployment on pushes to default branch.
+REQ-021: `.github/workflows/site-build-check.yml` MUST exist.
+REQ-022: Build-check workflow MUST validate site generation on pull requests without deployment.
+
+### Document Structure
+
+REQ-023: This canonical document MUST contain a section titled `## Core`.
+REQ-024: This canonical document MUST contain a section titled `## Repository Structure`.
+REQ-025: This canonical document MUST contain a section titled `## Version`.
+REQ-026: `AGENTS.md` MUST contain a section titled `## Repository Map`.
+REQ-027: `AGENTS.md` MUST contain a section titled `## Markdown Authoring Rules`.
+
+---
+
+## Repository Structure
+
+### Required Paths
+
+The following paths are REQUIRED for conformance.
+
+| Path | Purpose | Requirement Links |
 |---|---|---|
-| Seed Doc (with Core and Glossary sections) | [`docs/seed-doc.md`](docs/seed-doc.md) | `/` |
+| `docs/seed-doc.md` | Canonical specification document | REQ-001, REQ-002, REQ-003, REQ-023, REQ-024, REQ-025 |
+| `AGENTS.md` | Repository map and authoring rules | REQ-007, REQ-008, REQ-026, REQ-027 |
+| `README.md` | Repository entry point | REQ-009 |
+| `site/lib/content.ts` | Canonical document loader | REQ-012, REQ-013 |
+| `site/scripts/validate-content.mjs` | Pre-build content validation | REQ-014, REQ-015, REQ-016 |
+| `site/scripts/validate-structure.sh` | Structure conformance validation | REQ-017, REQ-018 |
+| `.github/workflows/publish-site.yml` | Publish workflow | REQ-019, REQ-020 |
+| `.github/workflows/site-build-check.yml` | Pull-request build workflow | REQ-021, REQ-022 |
 
-Read `AGENTS.md` for the full repository map, markdown authoring rules, and governance notes that apply when editing this file.
+### Forbidden Patterns
 
-## Website
+1. Creating `site/content/` or `site/docs/`.
+2. Using symbolic links for canonical documents.
+3. Storing duplicate canonical content in parallel locations.
 
-This repository also includes a self-hosted static site (`site/`, Next.js 14 App Router) that renders the canonical documents above as browsable locally or centrally hosted website.
+---
 
-It reads the documents directly from their repository paths at build time — nothing is copied into `site/`, so the rendered pages can never drift from the source.
+## Validation
 
-### Running the site locally
+Validation enforces structural and publication conformance.
+`site/scripts/validate-content.mjs` enforces REQ-014 through REQ-016.
+`site/scripts/validate-structure.sh` enforces repository requirements and forbidden patterns.
+
+### Validation Contract
+
+A repository claiming SpecPubSpec conformance MUST pass the following check.
 
 ```bash
-cd site
-npm install
-npm run build
-npx serve out
+bash site/scripts/validate-structure.sh
+echo $?  # MUST output 0
 ```
 
-Then open your browser to the address `serve` prints (typically `http://localhost:3000`).
+A non-zero exit code is non-conformance.
 
-See [`site/README.md`](site/README.md) for the full build/preview workflow, and `.github/workflows/site-build-check.yml` / `publish-site.yml` for how the site is checked and published in CI.
+### CI Execution Rules
 
-## Contributing
+1. Publish workflow MUST run content validation and build before deploy.
+2. Build-check workflow MUST run validation and build on pull requests.
+3. Any validation failure MUST fail the workflow run.
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to report issues and submit pull requests, and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) for our community standards.
-Any pull request that edits `docs/seed-doc.md` must include an updated Sync Impact Report, per `AGENTS.md`'s Seed Doc & Governance Notes.
+---
 
-## Security
+## Terminology
 
-See [`SECURITY.md`](SECURITY.md) for how to report a security issue.
+Agent: An autonomous coding system that reads and applies repository specifications.
+Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
+Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
+Conformant repository: A repository that satisfies REQ-001 through REQ-027 and passes section 6 validation.
+Atomic publication: A publish model where partial deployment is impossible.
+
+---
+
+## Version
+
+This specification is at version 1.0.0 and follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+| Version | Date | Change |
+|---|---|---|
+| 1.0.0 | 2026-07-24 | Initial SpecPubSpec release with normative requirement set REQ-001 through REQ-027 and executable validation contract |
+
+Version policy.
+MAJOR increments change conformance semantics.
+MINOR increments add backward-compatible requirements or clarifications.
+PATCH increments fix wording or defects without changing conformance semantics.
+
+---
+
+End of specification.

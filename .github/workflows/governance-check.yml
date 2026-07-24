@@ -4,12 +4,18 @@ on:
   push:
     paths:
       - 'AGENTS.md'
+      - 'README.md'
+      - 'QUICKSTART.md'
       - 'docs/seed-doc.md'
+      - 'scripts/sync-readme.sh'
       - '.github/workflows/governance-check.yml'
   pull_request:
     paths:
       - 'AGENTS.md'
+      - 'README.md'
+      - 'QUICKSTART.md'
       - 'docs/seed-doc.md'
+      - 'scripts/sync-readme.sh'
       - '.github/workflows/governance-check.yml'
 
 jobs:
@@ -28,6 +34,8 @@ jobs:
           for artifact in \
             AGENTS.md \
             docs/seed-doc.md \
+            QUICKSTART.md \
+            scripts/sync-readme.sh \
             .github/CODEOWNERS \
             .github/workflows/governance-check.yml; do
             if [ ! -e "$artifact" ]; then
@@ -42,6 +50,7 @@ jobs:
           fail=0
           for path in \
             AGENTS.md \
+            README.md \
             docs/seed-doc.md; do
             if [ -L "$path" ]; then
               echo "FAIL: symlink prohibited: $path" >&2
@@ -71,3 +80,14 @@ jobs:
           fi
 
           [ "$fail" -eq 0 ] || exit 1
+
+      - name: Validate README.md mirrors the canonical document (no drift)
+        run: |
+          tmp_readme="$(mktemp)"
+          chmod +x scripts/sync-readme.sh
+          scripts/sync-readme.sh --target-path "$tmp_readme"
+          if ! diff -u README.md "$tmp_readme"; then
+            echo "FAIL: README.md has drifted from docs/seed-doc.md." >&2
+            echo "Run scripts/sync-readme.sh to regenerate README.md, then commit the result." >&2
+            exit 1
+          fi

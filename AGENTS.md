@@ -12,6 +12,11 @@ There is exactly one copy of every canonical document; the website is a renderin
 
 - `docs/seed-doc.md` — the sole canonical document (currently v1.2.0): the project's seed doc, folding in the Specification and Glossary as sections.
   Read this first: it states the non-negotiable principles every spec, plan, and task in this repo must satisfy, followed by a placeholder specification and glossary for a new project seeded from this template; replace those sections with your own project's content, keeping the section structure so the site continues to render a complete document.
+- `README.md` — a **generated, byte-for-byte mirror** of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and drift-checked in `.github/workflows/governance-check.yml`.
+  It exists to reinforce the canonical document as the source of truth on the repo's default landing page.
+  Never hand-edit `README.md`; edit `docs/seed-doc.md` and re-run `scripts/sync-readme.sh`.
+- `QUICKSTART.md` — the actual repository orientation guide: what this repo is, how to build the site, and how to contribute.
+  Read this for anything README.md would normally cover.
 - `.specify/` — spec-kit tooling (`specify-cli`), templates, and scripts that drive the `/speckit.*` workflow (`specify`, `plan`, `tasks`, ...).
 - `specs/<NNN>-<short-name>/` — created on demand by `/speckit.specify` for a feature in progress, each containing `spec.md`, `plan.md`, `research.md`, `data-model.md`, `quickstart.md`, and `contracts/`.
   This directory does not currently exist; it reappears only while a feature is being planned, and its content is retired once the feature ships (see the seed doc's Surface Only What Survives principle).
@@ -24,6 +29,7 @@ There is exactly one copy of every canonical document; the website is a renderin
   `.github/agents/`, `.github/prompts/`, and `.specify/` (the generated `/speckit.*` command stubs and the CLI tooling itself) were all removed in the specpubspec-easy cleanup once feature `001-dual-purpose-spec-site` shipped.
   Run `specify init --here --force --integration copilot` to regenerate `.github/agents/` and `.github/prompts/` only if the `/speckit.*` workflow is needed again for a future feature.
 - **Site build**: Node.js 20 LTS; see `site/README.md` for the exact install/build/verify commands.
+- **README sync**: after editing `docs/seed-doc.md`, run `scripts/sync-readme.sh` to regenerate `README.md` before committing; `governance-check.yml` fails the build if the two have drifted.
 
 ## Markdown Authoring Rules for Agents
 
@@ -33,6 +39,7 @@ They keep documents both human-scannable and cheap for agents to read back into 
 1. **One sentence per line.**
    Never wrap a sentence across multiple lines, and never place two sentences on the same line.
    This makes diffs readable at sentence granularity and avoids re-flow noise on unrelated edits.
+   Exception: `README.md` is a generated mirror of `docs/seed-doc.md` (see the Repository Map above); never hand-edit it or reflow it directly, regenerate it with `scripts/sync-readme.sh` instead.
 2. **ATX headers only** (`#`, `##`, `###`, ...).
    No setext (`===`/`---` underline) headers.
 3. **Fenced code blocks always carry a language tag** (` ```bash `, ` ```text `, ` ```yaml `, etc.), never a bare ` ``` `.
@@ -51,7 +58,7 @@ They keep documents both human-scannable and cheap for agents to read back into 
 
 - **Security**: never commit real credentials, tokens, or SSH keys.
   Use placeholders and document any required environment variables.
-- **Traceability**: PRs that touch `docs/seed-doc.md` should identify which functional requirement(s) or principle(s) the change affects.
+- **Traceability**: PRs that touch `docs/seed-doc.md` should identify which functional requirement(s) or principle(s) the change affects, and should run `scripts/sync-readme.sh` so `README.md` doesn't drift.
 
 ## Contribution Conventions
 
