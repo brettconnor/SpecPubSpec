@@ -1,6 +1,6 @@
-seed-doc.md
+# specpubspec
 
-This site's duel-purpose renders this repository's canonical document directly from its markdown source.
+This site's dual-purpose design renders this repository's canonical document directly from its markdown source.
 
 `specpubspec` is a dual-purpose specification and documentation repository for the Agentic Specification Publication Specification.
 The same canonical markdown files are simultaneously:

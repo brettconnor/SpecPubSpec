@@ -12,7 +12,7 @@ The specpubspec team and community take all security bugs in specpubspec serious
 Thank you for improving the security of specpubspec.
 We appreciate your efforts and responsible disclosure and will make every effort to acknowledge your contributions.
 
-Report security bugs by using [GitHub's private vulnerability reporting](https://github.com/your-org/specpubspec/security/advisories).
+Report security bugs by using [GitHub's private vulnerability reporting](https://wwwin-github.cisco.com/brettcon/specpubspc/security/advisories).
 
 The maintainers will acknowledge your report within 48 hours, and will send a more detailed response within 48 hours indicating the next steps in handling your report.
 After the initial reply to your report, the security team will endeavor to keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
