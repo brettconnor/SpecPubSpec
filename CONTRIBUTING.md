@@ -11,7 +11,7 @@ This includes creation of issues or pull requests, commenting on issues or pull 
 
 ## Reporting Issues
 
-Before reporting a new issue, please ensure that the issue was not already reported or fixed by searching through our [issues list](https://github.com/your-org/specpubspec/issues).
+Before reporting a new issue, please ensure that the issue was not already reported or fixed by searching through our [issues list](https://github.com/your-org/specpubspec-dev/issues).
 
 When creating a new issue, please be sure to include a **title and clear description**, as much relevant information as possible, and, if possible, a test case.
 
