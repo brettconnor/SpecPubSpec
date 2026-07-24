@@ -12,37 +12,12 @@ on:
       - 'docs/seed-doc.md'
       - '.github/workflows/governance-check.yml'
 
-env:
-  POLICY_PLANE_URL: ${{ vars.POLICY_PLANE_URL || 'https://github.com/your-org/sdo-policy.git' }}
-  POLICY_PLANE_REF: ${{ vars.POLICY_PLANE_REF || 'main' }}
-
 jobs:
   governance-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Read governance source configuration
-        id: gov-source
-        run: |
-          policy_url="${POLICY_PLANE_URL:-}"
-          policy_ref="${POLICY_PLANE_REF:-}"
-          if [ -z "${policy_url}" ] || [ -z "${policy_ref}" ]; then
-            echo "ERROR: missing required POLICY_PLANE_URL or POLICY_PLANE_REF workflow env" >&2
-            exit 1
-          fi
-          echo "url=${policy_url}" >> "$GITHUB_OUTPUT"
-          echo "ref=${policy_ref}" >> "$GITHUB_OUTPUT"
-
-      - name: Fetch governance specifications
-        run: |
-          if [ "${{ steps.gov-source.outputs.url }}" = "https://github.com/your-org/sdo-policy.git" ]; then
-            echo "Skipping governance policy clone because POLICY_PLANE_URL is still a template placeholder." >&2
-            exit 0
-          fi
-          git clone --depth=1 --branch "${{ steps.gov-source.outputs.ref }}" \
-            "${{ steps.gov-source.outputs.url }}" /tmp/policy-plane
 
       - name: Validate required governance artifacts
         run: |
