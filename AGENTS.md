@@ -10,14 +10,15 @@ There is exactly one copy of every canonical document; the website is a renderin
 
 ## Repository Map
 
-- `docs/seed-doc.md` — the sole canonical document (currently v1.2.0): the project's seed doc, folding in the Specification and Glossary as sections.
-  Read this first: it states the non-negotiable principles every spec, plan, and task in this repo must satisfy, followed by a placeholder specification and glossary for a new project seeded from this template; replace those sections with your own project's content, keeping the section structure so the site continues to render a complete document.
+- `docs/seed-doc.md` — the sole canonical document: the SpecPubSpec normative specification (REQ-001 through REQ-031; see its own `## Version` section for the current version number, not hardcoded here to avoid this file drifting out of sync).
+  Read this first: it states the non-negotiable principles and normative requirements every change in this repo must satisfy.
 - `README.md` — a **generated, byte-for-byte mirror** of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and drift-checked in `.github/workflows/governance-check.yml`.
   It exists to reinforce the canonical document as the source of truth on the repo's default landing page.
   Never hand-edit `README.md`; edit `docs/seed-doc.md` and re-run `scripts/sync-readme.sh`.
 - `QUICKSTART.md` — the actual repository orientation guide: what this repo is, how to build the site, and how to contribute.
   Read this for anything README.md would normally cover.
 - `.specify/` — spec-kit tooling (`specify-cli`), templates, and scripts that drive the `/speckit.*` workflow (`specify`, `plan`, `tasks`, ...).
+  This directory does not currently exist; it was removed in the specpubspec-easy cleanup once feature `001-dual-purpose-spec-site` shipped (see Dev Environment Tips below), and reappears only if `specify init` is re-run for a future feature.
 - `specs/<NNN>-<short-name>/` — created on demand by `/speckit.specify` for a feature in progress, each containing `spec.md`, `plan.md`, `research.md`, `data-model.md`, `quickstart.md`, and `contracts/`.
   This directory does not currently exist; it reappears only while a feature is being planned, and its content is retired once the feature ships (see the seed doc's Surface Only What Survives principle).
 - `site/` — the Next.js static site that renders the canonical document as one flowing page at `/`.

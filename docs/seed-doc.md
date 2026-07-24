@@ -1,6 +1,6 @@
 # Agentic Specification Publication Specification
 
-Version: 1.0.0.
+Version: 1.1.0.
 Status: Standard.
 Date: 2026-07-24.
 
@@ -12,7 +12,7 @@ A SpecPubSpec-conformant repository has exactly one canonical source of truth an
 ## Conformance
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
-A repository conforms to this specification only if it satisfies REQ-001 through REQ-027 and passes the validation contract in section 6.
+A repository conforms to this specification only if it satisfies REQ-001 through REQ-031 and passes the validation contract in section 6.
 
 ---
 
@@ -80,6 +80,16 @@ REQ-025: This canonical document MUST contain a section titled `## Version`.
 REQ-026: `AGENTS.md` MUST contain a section titled `## Repository Map`.
 REQ-027: `AGENTS.md` MUST contain a section titled `## Markdown Authoring Rules`.
 
+### Repository Orientation
+
+REQ-028: The repository MUST contain `QUICKSTART.md` at repository root documenting repository orientation, build instructions, and contribution guidance.
+
+### README Mirror Invariant
+
+REQ-029: `README.md` MUST be generated as a byte-for-byte mirror of `docs/seed-doc.md` and MUST NOT be hand-edited.
+REQ-030: `scripts/sync-readme.sh` MUST exist, MUST be executable, and MUST support a `--target-path` option for drift-checking without overwriting the checked-in `README.md`.
+REQ-031: Continuous integration MUST verify `README.md` has zero drift from `docs/seed-doc.md` and MUST fail the workflow run if drift is detected.
+
 ---
 
 ## Repository Structure
@@ -92,18 +102,21 @@ The following paths are REQUIRED for conformance.
 |---|---|---|
 | `docs/seed-doc.md` | Canonical specification document | REQ-001, REQ-002, REQ-003, REQ-023, REQ-024, REQ-025 |
 | `AGENTS.md` | Repository map and authoring rules | REQ-007, REQ-008, REQ-026, REQ-027 |
-| `README.md` | Repository entry point | REQ-009 |
+| `README.md` | Repository entry point; generated mirror of the canonical document | REQ-009, REQ-029 |
 | `site/lib/content.ts` | Canonical document loader | REQ-012, REQ-013 |
 | `site/scripts/validate-content.mjs` | Pre-build content validation | REQ-014, REQ-015, REQ-016 |
 | `site/scripts/validate-structure.sh` | Structure conformance validation | REQ-017, REQ-018 |
 | `.github/workflows/publish-site.yml` | Publish workflow | REQ-019, REQ-020 |
 | `.github/workflows/site-build-check.yml` | Pull-request build workflow | REQ-021, REQ-022 |
+| `QUICKSTART.md` | Repository orientation, build, and contribution guide | REQ-028 |
+| `scripts/sync-readme.sh` | Regenerates README.md as a mirror of docs/seed-doc.md | REQ-029, REQ-030 |
 
 ### Forbidden Patterns
 
 1. Creating `site/content/` or `site/docs/`.
 2. Using symbolic links for canonical documents.
 3. Storing duplicate canonical content in parallel locations.
+4. Hand-editing `README.md` instead of regenerating it via `scripts/sync-readme.sh`.
 
 ---
 
@@ -124,11 +137,16 @@ echo $?  # MUST output 0
 
 A non-zero exit code is non-conformance.
 
+`scripts/sync-readme.sh` enforces REQ-029 through REQ-031 by regenerating `README.md` from `docs/seed-doc.md`.
+Conformance also requires a zero-diff comparison between the checked-in `README.md` and the output of `scripts/sync-readme.sh --target-path <tmp-file>`.
+A non-empty diff is non-conformance.
+
 ### CI Execution Rules
 
 1. Publish workflow MUST run content validation and build before deploy.
 2. Build-check workflow MUST run validation and build on pull requests.
 3. Any validation failure MUST fail the workflow run.
+4. Any workflow validating conformance MUST fail the run if `README.md` has drifted from `docs/seed-doc.md`.
 
 ---
 
@@ -137,7 +155,8 @@ A non-zero exit code is non-conformance.
 Agent: An autonomous coding system that reads and applies repository specifications.
 Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
 Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
-Conformant repository: A repository that satisfies REQ-001 through REQ-027 and passes section 6 validation.
+Conformant repository: A repository that satisfies REQ-001 through REQ-031 and passes section 6 validation.
+README mirror: The invariant that `README.md` is a byte-for-byte regenerated copy of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and never hand-edited.
 Atomic publication: A publish model where partial deployment is impossible.
 
 ---
@@ -149,6 +168,7 @@ This specification is at version 1.0.0 and follows [Semantic Versioning](https:/
 | Version | Date | Change |
 |---|---|---|
 | 1.0.0 | 2026-07-24 | Initial SpecPubSpec release with normative requirement set REQ-001 through REQ-027 and executable validation contract |
+| 1.1.0 | 2026-07-24 | Added REQ-028 through REQ-031, formalizing QUICKSTART.md, the README.md generated-mirror invariant, and scripts/sync-readme.sh as required conformance artifacts |
 
 Version policy.
 MAJOR increments change conformance semantics.

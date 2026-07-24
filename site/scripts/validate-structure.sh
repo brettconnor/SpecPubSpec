@@ -23,6 +23,14 @@ REQUIRED_FILES=(
   "site/scripts/validate-content.mjs"
   ".github/workflows/publish-site.yml"
   ".github/workflows/site-build-check.yml"
+  "QUICKSTART.md"
+  "scripts/sync-readme.sh"
+)
+
+# Files that must be executable (REQ-030)
+REQUIRED_EXECUTABLE_FILES=(
+  "scripts/sync-readme.sh"
+  "site/scripts/validate-structure.sh"
 )
 
 # Required directories
@@ -64,6 +72,29 @@ for file in "${NO_SYMLINK_FILES[@]}"; do
     fail=1
   fi
 done
+
+# Validate required scripts are executable (REQ-030)
+for file in "${REQUIRED_EXECUTABLE_FILES[@]}"; do
+  if [ -e "$file" ] && [ ! -x "$file" ]; then
+    echo "FAIL: required script is not executable: $file" >&2
+    fail=1
+  fi
+done
+
+# Validate README.md has zero drift from docs/seed-doc.md (REQ-029, REQ-031)
+if [ -f scripts/sync-readme.sh ] && [ -f README.md ]; then
+  tmp_readme="$(mktemp)"
+  if scripts/sync-readme.sh --target-path "$tmp_readme" >/dev/null; then
+    if ! diff -q README.md "$tmp_readme" >/dev/null; then
+      echo "FAIL: README.md has drifted from docs/seed-doc.md; run scripts/sync-readme.sh" >&2
+      fail=1
+    fi
+  else
+    echo "FAIL: scripts/sync-readme.sh failed to run" >&2
+    fail=1
+  fi
+  rm -f "$tmp_readme"
+fi
 
 # Validate docs/seed-doc.md has required sections
 if [ -f docs/seed-doc.md ]; then
