@@ -27,6 +27,15 @@ REQUIRED_FILES=(
   "scripts/sync-readme.sh"
   ".github/CODEOWNERS"
   ".github/workflows/governance-check.yml"
+  "scripts/validate-structure.sh"
+  "site/package.json"
+  "site/next.config.mjs"
+  "site/tsconfig.json"
+  "site/app/layout.tsx"
+  "site/app/page.tsx"
+  "site/app/globals.css"
+  "site/components/MarkdownPage.tsx"
+  "site/components/DownloadButton.tsx"
 )
 
 # Files that must be executable (REQ-030)
@@ -146,6 +155,32 @@ fi
 if [ -d site/docs ]; then
   echo "FAIL: site/docs/ directory exists; content must not be copied into site/" >&2
   fail=1
+fi
+
+# Validate site generator core artifacts wire together (REQ-034 through REQ-037)
+if [ -f site/package.json ]; then
+  if ! grep -q '"build"' site/package.json; then
+    echo "FAIL: site/package.json must define a build script" >&2
+    fail=1
+  fi
+fi
+
+if [ -f site/app/layout.tsx ]; then
+  if ! grep -q "globals.css" site/app/layout.tsx; then
+    echo "FAIL: site/app/layout.tsx must import globals.css" >&2
+    fail=1
+  fi
+fi
+
+if [ -f site/app/page.tsx ]; then
+  if ! grep -q "MarkdownPage" site/app/page.tsx; then
+    echo "FAIL: site/app/page.tsx must import/use MarkdownPage" >&2
+    fail=1
+  fi
+  if ! grep -q "DownloadButton" site/app/page.tsx; then
+    echo "FAIL: site/app/page.tsx must import/use DownloadButton" >&2
+    fail=1
+  fi
 fi
 
 # Validate governance-check.yml dogfoods this specification's own conformance (REQ-033)

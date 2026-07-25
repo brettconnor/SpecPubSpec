@@ -1,6 +1,6 @@
 # Agentic Specification Publication Specification
 
-Version: 2.0.0.
+Version: 2.1.0.
 Status: Standard.
 Date: 2026-07-25.
 
@@ -12,7 +12,7 @@ A SpecPubSpec-conformant repository has exactly one canonical source of truth an
 ## Conformance
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
-A repository conforms to this specification only if it satisfies REQ-001 through REQ-033 and passes the validation contract in section 6.
+A repository conforms to this specification only if it satisfies REQ-001 through REQ-037 and passes the validation contract in section 6.
 
 ---
 
@@ -56,6 +56,13 @@ REQ-010: The repository MUST include a static site generator in `site/`.
 REQ-011: The site generator MUST render canonical documents without manual content copying.
 REQ-012: `site/lib/content.ts` MUST exist and define `CANONICAL_SOURCE_PATHS`.
 REQ-013: `CANONICAL_SOURCE_PATHS` MUST reference `docs/seed-doc.md`.
+
+### Site Generator Core Artifacts
+
+REQ-034: The repository MUST contain `site/package.json` defining a `build` script that runs content validation before `next build`.
+REQ-035: The repository MUST contain `site/next.config.mjs` and `site/tsconfig.json` configuring the site generator.
+REQ-036: The repository MUST contain `site/app/layout.tsx`, `site/app/page.tsx`, and `site/app/globals.css` implementing the root route that renders the canonical document; `layout.tsx` MUST import `globals.css`.
+REQ-037: The repository MUST contain `site/components/MarkdownPage.tsx` and `site/components/DownloadButton.tsx`, both imported by `site/app/page.tsx`, to render and offer download of the canonical document.
 
 ### Validation
 
@@ -117,6 +124,10 @@ The following paths are REQUIRED for conformance.
 | `scripts/sync-readme.sh` | Regenerates README.md as a mirror of docs/seed-doc.md | REQ-029, REQ-030 |
 | `.github/CODEOWNERS` | Review ownership of governed artifacts | REQ-032 |
 | `.github/workflows/governance-check.yml` | Dogfoods this specification's own conformance in CI | REQ-033 |
+| `site/package.json` | Site build/lint/dev script definitions | REQ-034 |
+| `site/next.config.mjs`, `site/tsconfig.json` | Site generator configuration | REQ-035 |
+| `site/app/layout.tsx`, `site/app/page.tsx`, `site/app/globals.css` | Root route rendering the canonical document | REQ-036 |
+| `site/components/MarkdownPage.tsx`, `site/components/DownloadButton.tsx` | Canonical document rendering and download components | REQ-037 |
 
 ### Forbidden Patterns
 
@@ -162,7 +173,7 @@ A non-empty diff is non-conformance.
 Agent: An autonomous coding system that reads and applies repository specifications.
 Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
 Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
-Conformant repository: A repository that satisfies REQ-001 through REQ-033 and passes section 6 validation.
+Conformant repository: A repository that satisfies REQ-001 through REQ-037 and passes section 6 validation.
 README mirror: The invariant that `README.md` is a byte-for-byte regenerated copy of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and never hand-edited.
 Atomic publication: A publish model where partial deployment is impossible.
 
@@ -179,6 +190,7 @@ This section intentionally does not restate the version number, to avoid the two
 | 1.1.0 | 2026-07-24 | Added REQ-028 through REQ-031, formalizing QUICKSTART.md, the README.md generated-mirror invariant, and scripts/sync-readme.sh as required conformance artifacts |
 | 1.2.0 | 2026-07-25 | Added REQ-032 and REQ-033, formalizing .github/CODEOWNERS and CI-enforced dogfooding of this specification's own conformance as required artifacts |
 | 2.0.0 | 2026-07-25 | Relocated the structure-validation script from site/scripts/validate-structure.sh to scripts/validate-structure.sh (REQ-017, REQ-033), changing conformance semantics for the mandated path |
+| 2.1.0 | 2026-07-25 | Added REQ-034 through REQ-037, formalizing the Next.js site generator's own build-critical artifacts (package.json, next.config.mjs, tsconfig.json, app/layout.tsx, app/page.tsx, app/globals.css, and the MarkdownPage/DownloadButton components) as required conformance artifacts |
 
 Version policy.
 MAJOR increments change conformance semantics.
