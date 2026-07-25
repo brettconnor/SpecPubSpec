@@ -10,10 +10,6 @@ set -euo pipefail
 REPO_ROOT="${REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$REPO_ROOT"
 
-fail=0
-
-echo "[validate-structure] Validating SpecPubSpec structural conformance..."
-
 # Required files for minimal SpecPubSpec conformance
 REQUIRED_FILES=(
   "docs/seed-doc.md"
@@ -69,6 +65,17 @@ NO_SYMLINK_FILES=(
   "AGENTS.md"
   "README.md"
 )
+
+# Everything below is wrapped in main() so this file can be safely `source`d
+# (e.g. by scripts/audit-repo.sh, to reuse REQUIRED_FILES/REQUIRED_DIRS/
+# REQUIRED_EXECUTABLE_FILES as real bash arrays instead of parsing this
+# file's text) without running the validation pass or triggering the exit
+# at the bottom. The guard below only invokes main when this script is
+# executed directly, not when it's sourced.
+main() {
+fail=0
+
+echo "[validate-structure] Validating SpecPubSpec structural conformance..."
 
 # Validate required directories exist
 for dir in "${REQUIRED_DIRS[@]}"; do
@@ -221,8 +228,14 @@ fi
 
 if [ "$fail" -eq 0 ]; then
   echo "[validate-structure] ✓ Repository conforms to SpecPubSpec structural requirements"
-  exit 0
+  return 0
 else
   echo "[validate-structure] ✗ Repository does not conform to SpecPubSpec" >&2
-  exit 1
+  return 1
+fi
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+  main
+  exit $?
 fi

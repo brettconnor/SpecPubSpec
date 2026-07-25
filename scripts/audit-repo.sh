@@ -42,32 +42,18 @@ EXEMPT_PATHS=(
   "SECURITY.md"
 )
 
-# Extract REQUIRED_FILES and REQUIRED_DIRS from validate-structure.sh by
-# parsing its array literals directly, rather than sourcing the whole script
-# (which would run its own validation logic and exit).
-extract_array() {
-  local array_name="$1"
-  sed -n "/^${array_name}=(/,/^)/p" "$VALIDATE_SCRIPT" \
-    | grep -oE '"[^"]+"' \
-    | tr -d '"'
-}
-
-read_array_into() {
-  local array_name="$1"
-  local var_name="$2"
-  local line
-  eval "$var_name=()"
-  while IFS= read -r line; do
-    [ -z "$line" ] && continue
-    eval "$var_name+=(\"\$line\")"
-  done < <(extract_array "$array_name")
-}
-
-read_array_into "REQUIRED_FILES" REQUIRED_FILES
-read_array_into "REQUIRED_DIRS" REQUIRED_DIRS
+# Extract REQUIRED_FILES, REQUIRED_DIRS, and REQUIRED_EXECUTABLE_FILES by
+# sourcing validate-structure.sh directly (as real bash arrays, not by
+# parsing its source text with sed/grep). This is safe because
+# validate-structure.sh wraps its entire validation pass in a main()
+# function guarded by a `[ "${BASH_SOURCE[0]}" = "${0}" ]` check: sourcing it
+# here only defines the arrays (and the main function, which we never call),
+# it does not run the validation pass or exit this script.
+# shellcheck disable=SC1091
+source "$VALIDATE_SCRIPT"
 
 if [ "${#REQUIRED_FILES[@]}" -eq 0 ] || [ "${#REQUIRED_DIRS[@]}" -eq 0 ]; then
-  echo "FAIL: could not parse REQUIRED_FILES/REQUIRED_DIRS out of $VALIDATE_SCRIPT" >&2
+  echo "FAIL: REQUIRED_FILES/REQUIRED_DIRS were empty after sourcing $VALIDATE_SCRIPT" >&2
   exit 1
 fi
 
