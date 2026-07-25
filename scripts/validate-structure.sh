@@ -56,6 +56,9 @@ REQUIRED_DIRS=(
   "site/scripts"
   ".github"
   ".github/workflows"
+  "scripts"
+  "site/app"
+  "site/components"
 )
 
 # Files that must not be symlinks (canonical documents)

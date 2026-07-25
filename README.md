@@ -5,7 +5,7 @@
 
 # Agentic Specification Publication Specification
 
-Version: 2.4.0.
+Version: 2.5.0.
 Status: Standard.
 Date: 2026-07-25.
 
@@ -17,7 +17,7 @@ A SpecPubSpec-conformant repository has exactly one canonical source of truth an
 ## Conformance
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
-A repository conforms to this specification only if it satisfies REQ-001 through REQ-041 and passes the validation contract in section 6.
+A repository conforms to this specification only if it satisfies REQ-001 through REQ-042 and passes the validation contract in section 6.
 
 ---
 
@@ -75,6 +75,10 @@ REQ-040: The repository MUST contain `site/app/favicon.ico`, serving the root ro
 REQ-038: The repository MUST contain `site/package-lock.json`, since CI installs dependencies via `npm ci`, which requires an exact lockfile.
 REQ-039: The repository MUST contain `site/scripts/check-links.mjs`, invoked by the pull-request build-check workflow to fail on broken internal cross-references between rendered pages.
 REQ-041: The repository MUST contain `site/.eslintrc.json`. `next build` runs its own lint pass and fails the build on any violation of the rules this file configures; without this file present, that lint pass is silently skipped rather than falling back to a default rule set, so its absence would degrade CI without signal.
+
+### Required Directories
+
+REQ-042: The repository MUST contain the directories `scripts/`, `site/app/`, and `site/components/`, housing the files already mandated by REQ-017, REQ-030, REQ-036, REQ-037, and REQ-040.
 
 ### Validation
 
@@ -187,7 +191,7 @@ A non-empty diff is non-conformance.
 Agent: An autonomous coding system that reads and applies repository specifications.
 Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
 Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
-Conformant repository: A repository that satisfies REQ-001 through REQ-041 and passes section 6 validation.
+Conformant repository: A repository that satisfies REQ-001 through REQ-042 and passes section 6 validation.
 README mirror: The invariant that `README.md` is a byte-for-byte regenerated copy of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and never hand-edited.
 Atomic publication: A publish model where partial deployment is impossible.
 
@@ -208,6 +212,7 @@ This section intentionally does not restate the version number, to avoid the two
 | 2.2.0 | 2026-07-25 | Added REQ-038 and REQ-039, formalizing site/package-lock.json (required by CI's npm ci) and site/scripts/check-links.mjs (invoked by the PR build-check workflow) as required conformance artifacts |
 | 2.3.0 | 2026-07-25 | Added REQ-040, formalizing site/app/favicon.ico as a required conformance artifact; removed the orphaned site/README.md in favor of QUICKSTART.md's existing Website section, which already documented the same build/preview workflow |
 | 2.4.0 | 2026-07-25 | Added REQ-041, formalizing site/.eslintrc.json as a required conformance artifact (its absence silently disables next build's lint gate rather than falling back to defaults); removed the orphaned site/.prettierrc.json, site/.prettierignore, and the prettier/eslint-config-prettier devDependencies and eslintrc extends entry that referenced them, none of which were ever wired into any script or CI step |
+| 2.5.0 | 2026-07-25 | Added REQ-042, formalizing scripts/, site/app/, and site/components/ as required directories in validate-structure.sh's own REQUIRED_DIRS check, closing a redundant-but-real gap where these directories' existence was only ever implied by their required files, never asserted directly |
 
 Version policy.
 MAJOR increments change conformance semantics.
