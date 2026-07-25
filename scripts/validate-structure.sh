@@ -36,6 +36,8 @@ REQUIRED_FILES=(
   "site/app/globals.css"
   "site/components/MarkdownPage.tsx"
   "site/components/DownloadButton.tsx"
+  "site/package-lock.json"
+  "site/scripts/check-links.mjs"
 )
 
 # Files that must be executable (REQ-030)
