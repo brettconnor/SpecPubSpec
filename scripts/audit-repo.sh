@@ -93,7 +93,8 @@ while IFS= read -r -d '' path; do
   fi
 done < <(find . \
   \( -path ./.git -o -path ./node_modules -o -path ./site/node_modules \
-     -o -path ./site/.next -o -path ./site/out \) -prune \
+     -o -path ./site/.next -o -path ./site/out \
+     -o -path ./site/next-env.d.ts \) -prune \
   -o -print0)
 
 if [ "${#unaccounted[@]}" -gt 0 ]; then
