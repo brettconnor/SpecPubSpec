@@ -5,7 +5,7 @@
 
 # Agentic Specification Publication Specification
 
-Version: 2.2.0.
+Version: 2.3.0.
 Status: Standard.
 Date: 2026-07-25.
 
@@ -17,7 +17,7 @@ A SpecPubSpec-conformant repository has exactly one canonical source of truth an
 ## Conformance
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
-A repository conforms to this specification only if it satisfies REQ-001 through REQ-039 and passes the validation contract in section 6.
+A repository conforms to this specification only if it satisfies REQ-001 through REQ-040 and passes the validation contract in section 6.
 
 ---
 
@@ -68,6 +68,7 @@ REQ-034: The repository MUST contain `site/package.json` defining a `build` scri
 REQ-035: The repository MUST contain `site/next.config.mjs` and `site/tsconfig.json` configuring the site generator.
 REQ-036: The repository MUST contain `site/app/layout.tsx`, `site/app/page.tsx`, and `site/app/globals.css` implementing the root route that renders the canonical document; `layout.tsx` MUST import `globals.css`.
 REQ-037: The repository MUST contain `site/components/MarkdownPage.tsx` and `site/components/DownloadButton.tsx`, both imported by `site/app/page.tsx`, to render and offer download of the canonical document.
+REQ-040: The repository MUST contain `site/app/favicon.ico`, serving the root route's browser tab icon.
 
 ### Continuous Integration Dependencies
 
@@ -185,7 +186,7 @@ A non-empty diff is non-conformance.
 Agent: An autonomous coding system that reads and applies repository specifications.
 Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
 Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
-Conformant repository: A repository that satisfies REQ-001 through REQ-039 and passes section 6 validation.
+Conformant repository: A repository that satisfies REQ-001 through REQ-040 and passes section 6 validation.
 README mirror: The invariant that `README.md` is a byte-for-byte regenerated copy of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and never hand-edited.
 Atomic publication: A publish model where partial deployment is impossible.
 
@@ -204,6 +205,7 @@ This section intentionally does not restate the version number, to avoid the two
 | 2.0.0 | 2026-07-25 | Relocated the structure-validation script from site/scripts/validate-structure.sh to scripts/validate-structure.sh (REQ-017, REQ-033), changing conformance semantics for the mandated path |
 | 2.1.0 | 2026-07-25 | Added REQ-034 through REQ-037, formalizing the Next.js site generator's own build-critical artifacts (package.json, next.config.mjs, tsconfig.json, app/layout.tsx, app/page.tsx, app/globals.css, and the MarkdownPage/DownloadButton components) as required conformance artifacts |
 | 2.2.0 | 2026-07-25 | Added REQ-038 and REQ-039, formalizing site/package-lock.json (required by CI's npm ci) and site/scripts/check-links.mjs (invoked by the PR build-check workflow) as required conformance artifacts |
+| 2.3.0 | 2026-07-25 | Added REQ-040, formalizing site/app/favicon.ico as a required conformance artifact; removed the orphaned site/README.md in favor of QUICKSTART.md's existing Website section, which already documented the same build/preview workflow |
 
 Version policy.
 MAJOR increments change conformance semantics.

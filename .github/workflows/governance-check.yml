@@ -27,5 +27,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate SpecPubSpec conformance (dogfood REQ-001 through REQ-033)
+      - name: Validate SpecPubSpec conformance (dogfood docs/seed-doc.md's full normative requirement set)
         run: bash scripts/validate-structure.sh

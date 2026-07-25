@@ -38,6 +38,7 @@ REQUIRED_FILES=(
   "site/components/DownloadButton.tsx"
   "site/package-lock.json"
   "site/scripts/check-links.mjs"
+  "site/app/favicon.ico"
 )
 
 # Files that must be executable (REQ-030)

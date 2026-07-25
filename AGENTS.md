@@ -22,14 +22,14 @@ There is exactly one copy of every canonical document; the website is a renderin
 - `specs/<NNN>-<short-name>/` — created on demand by `/speckit.specify` for a feature in progress, each containing `spec.md`, `plan.md`, `research.md`, `data-model.md`, `quickstart.md`, and `contracts/`.
   This directory does not currently exist; it reappears only while a feature is being planned, and its content is retired once the feature ships (see the seed doc's Surface Only What Survives principle).
 - `site/` — the Next.js static site that renders the canonical document as one flowing page at `/`.
-  See `site/README.md` for build instructions; it reads the canonical document above directly, with no content copied into `site/`.
+  See `QUICKSTART.md`'s Website section for build instructions; it reads the canonical document above directly, with no content copied into `site/`.
 
 ## Dev Environment Tips
 
 - **spec-kit CLI**: installed via `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git`.
   `.github/agents/`, `.github/prompts/`, and `.specify/` (the generated `/speckit.*` command stubs and the CLI tooling itself) were all removed in the specpubspec-easy cleanup once feature `001-dual-purpose-spec-site` shipped.
   Run `specify init --here --force --integration copilot` to regenerate `.github/agents/` and `.github/prompts/` only if the `/speckit.*` workflow is needed again for a future feature.
-- **Site build**: Node.js 20 LTS; see `site/README.md` for the exact install/build/verify commands.
+- **Site build**: Node.js 20 LTS; see `QUICKSTART.md`'s Website section for the exact install/build/verify commands.
 - **README sync**: after editing `docs/seed-doc.md`, run `scripts/sync-readme.sh` to regenerate `README.md` before committing; `governance-check.yml` fails the build if the two have drifted.
 
 ## Markdown Authoring Rules for Agents

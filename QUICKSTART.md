@@ -47,12 +47,13 @@ npx serve out
 
 Then open your browser to the address `serve` prints (typically `http://localhost:3000`).
 
-See [`site/README.md`](site/README.md) for the full build/preview workflow, and `.github/workflows/site-build-check.yml` / `publish-site.yml` for how the site is checked and published in CI.
+Do not add markdown content directly under `site/`; edit the canonical source files at their repository paths instead (e.g. `docs/seed-doc.md`), then rebuild.
+See `.github/workflows/site-build-check.yml` / `publish-site.yml` for how the site is checked and published in CI.
 
 ## Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to report issues and submit pull requests, and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) for our community standards.
-Any pull request that edits `docs/seed-doc.md` must include an updated Sync Impact Report, per `AGENTS.md`'s Seed Doc & Governance Notes, and should run `scripts/sync-readme.sh` to keep `README.md` in sync.
+Any pull request that edits `docs/seed-doc.md` should add a row to that document's own `## Version` history table describing the change, per `AGENTS.md`'s Seed Doc & Governance Notes, and should run `scripts/sync-readme.sh` to keep `README.md` in sync.
 
 ## Security
 
