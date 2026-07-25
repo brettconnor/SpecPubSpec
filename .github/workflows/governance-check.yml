@@ -28,4 +28,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate SpecPubSpec conformance (dogfood REQ-001 through REQ-033)
-        run: bash site/scripts/validate-structure.sh
+        run: bash scripts/validate-structure.sh

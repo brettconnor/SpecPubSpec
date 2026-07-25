@@ -32,7 +32,7 @@ REQUIRED_FILES=(
 # Files that must be executable (REQ-030)
 REQUIRED_EXECUTABLE_FILES=(
   "scripts/sync-readme.sh"
-  "site/scripts/validate-structure.sh"
+  "scripts/validate-structure.sh"
 )
 
 # Required directories
@@ -151,7 +151,7 @@ fi
 # Validate governance-check.yml dogfoods this specification's own conformance (REQ-033)
 if [ -f .github/workflows/governance-check.yml ]; then
   if ! grep -q "validate-structure.sh" .github/workflows/governance-check.yml; then
-    echo "FAIL: .github/workflows/governance-check.yml must invoke site/scripts/validate-structure.sh" >&2
+    echo "FAIL: .github/workflows/governance-check.yml must invoke scripts/validate-structure.sh" >&2
     fail=1
   fi
   if ! grep -q "^  push:" .github/workflows/governance-check.yml; then

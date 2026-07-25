@@ -51,9 +51,9 @@ They keep documents both human-scannable and cheap for agents to read back into 
 
 ## Seed Doc & Governance Notes
 
-- Amending `docs/seed-doc.md` requires: documenting the scenario that motivates the change (or that a principle is out of scope for anything this repo produces), a version bump per its own Versioning policy, and an updated Sync Impact Report at the top of the file.
-  See the seed doc's own Governance section for the full contract.
-- A change to the seed doc at MINOR or above requires re-validating the downstream artifacts table in that same Governance section (specs, README, any generated plan/tasks) and recording the result.
+- Amending `docs/seed-doc.md` requires: a version bump per its own Versioning policy (see its `## Version` section), and a new row in that section's version history table describing the change and which REQ IDs it added, changed, or removed.
+  Run `scripts/sync-readme.sh` afterward so `README.md` doesn't drift.
+- A change to the seed doc that adds or changes REQ IDs should also update `scripts/validate-structure.sh` if the change introduces a new required artifact, path, or invariant, so the validation contract in the seed doc's `## Validation` section stays enforceable rather than aspirational.
 
 ## PR Instructions
 

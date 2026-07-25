@@ -5,9 +5,9 @@
 
 # Agentic Specification Publication Specification
 
-Version: 1.2.0.
+Version: 2.0.0.
 Status: Standard.
-Date: 2026-07-24.
+Date: 2026-07-25.
 
 ## Abstract
 
@@ -67,7 +67,7 @@ REQ-013: `CANONICAL_SOURCE_PATHS` MUST reference `docs/seed-doc.md`.
 REQ-014: `site/scripts/validate-content.mjs` MUST exist.
 REQ-015: Content validation MUST execute before site generation.
 REQ-016: Build MUST fail if a canonical document is missing or malformed.
-REQ-017: `site/scripts/validate-structure.sh` MUST exist and be executable.
+REQ-017: `scripts/validate-structure.sh` MUST exist and be executable.
 REQ-018: Structure validation MUST return exit code 0 on conformance and non-zero on violation.
 
 ### Continuous Integration
@@ -98,7 +98,7 @@ REQ-031: Continuous integration MUST verify `README.md` has zero drift from `doc
 ### Governance Enforcement
 
 REQ-032: The repository MUST contain `.github/CODEOWNERS` requiring review of governed artifacts.
-REQ-033: `.github/workflows/governance-check.yml` MUST exist and MUST invoke `site/scripts/validate-structure.sh` on both `push` and `pull_request` triggers, so this specification's own conformance is dogfooded by CI rather than left to manual review.
+REQ-033: `.github/workflows/governance-check.yml` MUST exist and MUST invoke `scripts/validate-structure.sh` on both `push` and `pull_request` triggers, so this specification's own conformance is dogfooded by CI rather than left to manual review.
 
 ---
 
@@ -115,7 +115,7 @@ The following paths are REQUIRED for conformance.
 | `README.md` | Repository entry point; generated mirror of the canonical document | REQ-009, REQ-029 |
 | `site/lib/content.ts` | Canonical document loader | REQ-012, REQ-013 |
 | `site/scripts/validate-content.mjs` | Pre-build content validation | REQ-014, REQ-015, REQ-016 |
-| `site/scripts/validate-structure.sh` | Structure conformance validation | REQ-017, REQ-018 |
+| `scripts/validate-structure.sh` | Structure conformance validation | REQ-017, REQ-018 |
 | `.github/workflows/publish-site.yml` | Publish workflow | REQ-019, REQ-020 |
 | `.github/workflows/site-build-check.yml` | Pull-request build workflow | REQ-021, REQ-022 |
 | `QUICKSTART.md` | Repository orientation, build, and contribution guide | REQ-028 |
@@ -136,14 +136,14 @@ The following paths are REQUIRED for conformance.
 
 Validation enforces structural and publication conformance.
 `site/scripts/validate-content.mjs` enforces REQ-014 through REQ-016.
-`site/scripts/validate-structure.sh` enforces repository requirements and forbidden patterns.
+`scripts/validate-structure.sh` enforces repository requirements and forbidden patterns.
 
 ### Validation Contract
 
 A repository claiming SpecPubSpec conformance MUST pass the following check.
 
 ```bash
-bash site/scripts/validate-structure.sh
+bash scripts/validate-structure.sh
 echo $?  # MUST output 0
 ```
 
@@ -175,13 +175,15 @@ Atomic publication: A publish model where partial deployment is impossible.
 
 ## Version
 
-This specification is at version 1.0.0 and follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+This specification follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html); see the Version line at the top of this document and the history table below for the current version.
+This section intentionally does not restate the version number, to avoid the two ever drifting apart.
 
 | Version | Date | Change |
 |---|---|---|
 | 1.0.0 | 2026-07-24 | Initial SpecPubSpec release with normative requirement set REQ-001 through REQ-027 and executable validation contract |
 | 1.1.0 | 2026-07-24 | Added REQ-028 through REQ-031, formalizing QUICKSTART.md, the README.md generated-mirror invariant, and scripts/sync-readme.sh as required conformance artifacts |
 | 1.2.0 | 2026-07-25 | Added REQ-032 and REQ-033, formalizing .github/CODEOWNERS and CI-enforced dogfooding of this specification's own conformance as required artifacts |
+| 2.0.0 | 2026-07-25 | Relocated the structure-validation script from site/scripts/validate-structure.sh to scripts/validate-structure.sh (REQ-017, REQ-033), changing conformance semantics for the mandated path |
 
 Version policy.
 MAJOR increments change conformance semantics.
