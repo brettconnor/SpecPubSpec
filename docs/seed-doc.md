@@ -1,6 +1,6 @@
 # Agentic Specification Publication Specification
 
-Version: 1.1.0.
+Version: 1.2.0.
 Status: Standard.
 Date: 2026-07-24.
 
@@ -12,7 +12,7 @@ A SpecPubSpec-conformant repository has exactly one canonical source of truth an
 ## Conformance
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
-A repository conforms to this specification only if it satisfies REQ-001 through REQ-031 and passes the validation contract in section 6.
+A repository conforms to this specification only if it satisfies REQ-001 through REQ-033 and passes the validation contract in section 6.
 
 ---
 
@@ -90,6 +90,11 @@ REQ-029: `README.md` MUST be generated as a byte-for-byte mirror of `docs/seed-d
 REQ-030: `scripts/sync-readme.sh` MUST exist, MUST be executable, and MUST support a `--target-path` option for drift-checking without overwriting the checked-in `README.md`.
 REQ-031: Continuous integration MUST verify `README.md` has zero drift from `docs/seed-doc.md` and MUST fail the workflow run if drift is detected.
 
+### Governance Enforcement
+
+REQ-032: The repository MUST contain `.github/CODEOWNERS` requiring review of governed artifacts.
+REQ-033: `.github/workflows/governance-check.yml` MUST exist and MUST invoke `site/scripts/validate-structure.sh` on both `push` and `pull_request` triggers, so this specification's own conformance is dogfooded by CI rather than left to manual review.
+
 ---
 
 ## Repository Structure
@@ -110,6 +115,8 @@ The following paths are REQUIRED for conformance.
 | `.github/workflows/site-build-check.yml` | Pull-request build workflow | REQ-021, REQ-022 |
 | `QUICKSTART.md` | Repository orientation, build, and contribution guide | REQ-028 |
 | `scripts/sync-readme.sh` | Regenerates README.md as a mirror of docs/seed-doc.md | REQ-029, REQ-030 |
+| `.github/CODEOWNERS` | Review ownership of governed artifacts | REQ-032 |
+| `.github/workflows/governance-check.yml` | Dogfoods this specification's own conformance in CI | REQ-033 |
 
 ### Forbidden Patterns
 
@@ -155,7 +162,7 @@ A non-empty diff is non-conformance.
 Agent: An autonomous coding system that reads and applies repository specifications.
 Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
 Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
-Conformant repository: A repository that satisfies REQ-001 through REQ-031 and passes section 6 validation.
+Conformant repository: A repository that satisfies REQ-001 through REQ-033 and passes section 6 validation.
 README mirror: The invariant that `README.md` is a byte-for-byte regenerated copy of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and never hand-edited.
 Atomic publication: A publish model where partial deployment is impossible.
 
@@ -169,6 +176,7 @@ This specification is at version 1.0.0 and follows [Semantic Versioning](https:/
 |---|---|---|
 | 1.0.0 | 2026-07-24 | Initial SpecPubSpec release with normative requirement set REQ-001 through REQ-027 and executable validation contract |
 | 1.1.0 | 2026-07-24 | Added REQ-028 through REQ-031, formalizing QUICKSTART.md, the README.md generated-mirror invariant, and scripts/sync-readme.sh as required conformance artifacts |
+| 1.2.0 | 2026-07-25 | Added REQ-032 and REQ-033, formalizing .github/CODEOWNERS and CI-enforced dogfooding of this specification's own conformance as required artifacts |
 
 Version policy.
 MAJOR increments change conformance semantics.

@@ -25,6 +25,8 @@ REQUIRED_FILES=(
   ".github/workflows/site-build-check.yml"
   "QUICKSTART.md"
   "scripts/sync-readme.sh"
+  ".github/CODEOWNERS"
+  ".github/workflows/governance-check.yml"
 )
 
 # Files that must be executable (REQ-030)
@@ -144,6 +146,22 @@ fi
 if [ -d site/docs ]; then
   echo "FAIL: site/docs/ directory exists; content must not be copied into site/" >&2
   fail=1
+fi
+
+# Validate governance-check.yml dogfoods this specification's own conformance (REQ-033)
+if [ -f .github/workflows/governance-check.yml ]; then
+  if ! grep -q "validate-structure.sh" .github/workflows/governance-check.yml; then
+    echo "FAIL: .github/workflows/governance-check.yml must invoke site/scripts/validate-structure.sh" >&2
+    fail=1
+  fi
+  if ! grep -q "^  push:" .github/workflows/governance-check.yml; then
+    echo "FAIL: .github/workflows/governance-check.yml must trigger on push" >&2
+    fail=1
+  fi
+  if ! grep -q "^  pull_request:" .github/workflows/governance-check.yml; then
+    echo "FAIL: .github/workflows/governance-check.yml must trigger on pull_request" >&2
+    fail=1
+  fi
 fi
 
 if [ "$fail" -eq 0 ]; then

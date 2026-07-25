@@ -8,6 +8,7 @@ on:
       - 'QUICKSTART.md'
       - 'docs/seed-doc.md'
       - 'scripts/sync-readme.sh'
+      - '.github/CODEOWNERS'
       - '.github/workflows/governance-check.yml'
   pull_request:
     paths:
@@ -16,6 +17,7 @@ on:
       - 'QUICKSTART.md'
       - 'docs/seed-doc.md'
       - 'scripts/sync-readme.sh'
+      - '.github/CODEOWNERS'
       - '.github/workflows/governance-check.yml'
 
 jobs:
@@ -25,18 +27,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate SpecPubSpec conformance (dogfood REQ-001 through REQ-031)
+      - name: Validate SpecPubSpec conformance (dogfood REQ-001 through REQ-033)
         run: bash site/scripts/validate-structure.sh
-
-      - name: Validate repo-specific governance artifacts (outside SpecPubSpec scope)
-        run: |
-          fail=0
-          for artifact in \
-            .github/CODEOWNERS \
-            .github/workflows/governance-check.yml; do
-            if [ ! -e "$artifact" ]; then
-              echo "FAIL: missing required artifact: $artifact" >&2
-              fail=1
-            fi
-          done
-          [ "$fail" -eq 0 ] || exit 1
