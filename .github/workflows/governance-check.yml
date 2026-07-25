@@ -25,17 +25,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate SpecPubSpec structure conformance
+      - name: Validate SpecPubSpec conformance (dogfood REQ-001 through REQ-031)
         run: bash site/scripts/validate-structure.sh
 
-      - name: Validate required governance artifacts
+      - name: Validate repo-specific governance artifacts (outside SpecPubSpec scope)
         run: |
           fail=0
           for artifact in \
-            AGENTS.md \
-            docs/seed-doc.md \
-            QUICKSTART.md \
-            scripts/sync-readme.sh \
             .github/CODEOWNERS \
             .github/workflows/governance-check.yml; do
             if [ ! -e "$artifact" ]; then
@@ -44,50 +40,3 @@ jobs:
             fi
           done
           [ "$fail" -eq 0 ] || exit 1
-
-      - name: Validate no symlinks in governed primitives
-        run: |
-          fail=0
-          for path in \
-            AGENTS.md \
-            README.md \
-            docs/seed-doc.md; do
-            if [ -L "$path" ]; then
-              echo "FAIL: symlink prohibited: $path" >&2
-              fail=1
-            fi
-          done
-          [ "$fail" -eq 0 ] || exit 1
-
-      - name: Validate governed primitive frontmatter and sections
-        run: |
-          fail=0
-
-          check_section() {
-            local file="$1" section="$2"
-            grep -qF "$section" "$file" || {
-              echo "FAIL: $file missing required section: $section" >&2
-              fail=1
-            }
-          }
-
-          # docs/seed-doc.md (sole canonical governed document): checks for
-          # required prose sections, not YAML frontmatter -- this document
-          # is plain markdown by design (see AGENTS.md's Markdown Authoring
-          # Rules), it does not use frontmatter fields.
-          if [ -f docs/seed-doc.md ]; then
-            check_section docs/seed-doc.md "## Version"
-          fi
-
-          [ "$fail" -eq 0 ] || exit 1
-
-      - name: Validate README.md mirrors the canonical document (no drift)
-        run: |
-          tmp_readme="$(mktemp)"
-          chmod +x scripts/sync-readme.sh
-          scripts/sync-readme.sh --target-path "$tmp_readme"
-          if ! diff -u README.md "$tmp_readme"; then
-            echo "FAIL: README.md has drifted from docs/seed-doc.md." >&2
-            echo "Run scripts/sync-readme.sh to regenerate README.md, then commit the result." >&2
-            exit 1
-          fi

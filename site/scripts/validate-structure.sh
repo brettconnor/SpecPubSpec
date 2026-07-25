@@ -47,6 +47,7 @@ REQUIRED_DIRS=(
 NO_SYMLINK_FILES=(
   "docs/seed-doc.md"
   "AGENTS.md"
+  "README.md"
 )
 
 # Validate required directories exist
