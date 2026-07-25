@@ -1,24 +1,8 @@
 name: Governance Check
 
 on:
-  push:
-    paths:
-      - 'AGENTS.md'
-      - 'README.md'
-      - 'QUICKSTART.md'
-      - 'docs/seed-doc.md'
-      - 'scripts/sync-readme.sh'
-      - '.github/CODEOWNERS'
-      - '.github/workflows/governance-check.yml'
-  pull_request:
-    paths:
-      - 'AGENTS.md'
-      - 'README.md'
-      - 'QUICKSTART.md'
-      - 'docs/seed-doc.md'
-      - 'scripts/sync-readme.sh'
-      - '.github/CODEOWNERS'
-      - '.github/workflows/governance-check.yml'
+  push: {}
+  pull_request: {}
 
 jobs:
   governance-check:
@@ -29,3 +13,6 @@ jobs:
 
       - name: Validate SpecPubSpec conformance (dogfood docs/seed-doc.md's full normative requirement set)
         run: bash scripts/validate-structure.sh
+
+      - name: Audit repository for unaccounted-for files and directories (REQ-044)
+        run: bash scripts/audit-repo.sh

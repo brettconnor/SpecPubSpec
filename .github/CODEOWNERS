@@ -1,3 +1,5 @@
 # CODEOWNERS
 # All governed artifacts require operator review before merge.
+# Forking this repo to publish your own spec? Replace the handle below with
+# your own GitHub username or team (see QUICKSTART.md's Bootstrapping section).
 * @brettcon

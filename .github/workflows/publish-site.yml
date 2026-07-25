@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-      - spechub-easy/default-main-202607221905z
   workflow_dispatch:
 
 permissions:

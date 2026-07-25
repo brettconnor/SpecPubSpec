@@ -40,12 +40,14 @@ REQUIRED_FILES=(
   "site/scripts/check-links.mjs"
   "site/app/favicon.ico"
   "site/.eslintrc.json"
+  "scripts/audit-repo.sh"
 )
 
-# Files that must be executable (REQ-030)
+# Files that must be executable (REQ-030, REQ-044)
 REQUIRED_EXECUTABLE_FILES=(
   "scripts/sync-readme.sh"
   "scripts/validate-structure.sh"
+  "scripts/audit-repo.sh"
 )
 
 # Required directories
@@ -138,6 +140,17 @@ if [ -f AGENTS.md ]; then
   done
 else
   echo "FAIL: AGENTS.md does not exist" >&2
+  fail=1
+fi
+
+# Validate QUICKSTART.md has required sections (REQ-043)
+if [ -f QUICKSTART.md ]; then
+  if ! grep -qF "## Bootstrapping Your Own Spec" QUICKSTART.md; then
+    echo "FAIL: QUICKSTART.md missing required section: ## Bootstrapping Your Own Spec" >&2
+    fail=1
+  fi
+else
+  echo "FAIL: QUICKSTART.md does not exist" >&2
   fail=1
 fi
 

@@ -5,7 +5,7 @@
 
 # Agentic Specification Publication Specification
 
-Version: 2.5.0.
+Version: 2.7.0.
 Status: Standard.
 Date: 2026-07-25.
 
@@ -17,7 +17,7 @@ A SpecPubSpec-conformant repository has exactly one canonical source of truth an
 ## Conformance
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
-A repository conforms to this specification only if it satisfies REQ-001 through REQ-042 and passes the validation contract in section 6.
+A repository conforms to this specification only if it satisfies REQ-001 through REQ-044 and passes the validation contract in section 6.
 
 ---
 
@@ -80,6 +80,10 @@ REQ-041: The repository MUST contain `site/.eslintrc.json`. `next build` runs it
 
 REQ-042: The repository MUST contain the directories `scripts/`, `site/app/`, and `site/components/`, housing the files already mandated by REQ-017, REQ-030, REQ-036, REQ-037, and REQ-040.
 
+### Repository-Wide Accounting
+
+REQ-044: The repository MUST contain `scripts/audit-repo.sh`, MUST be executable, and MUST fail (non-zero exit) if any file or directory on disk is not either listed in `scripts/validate-structure.sh`'s `REQUIRED_FILES`/`REQUIRED_DIRS` arrays or explicitly exempted as out-of-scope repo hygiene; `.github/workflows/governance-check.yml` MUST invoke it. This is the reverse check of REQ-001 through REQ-042: those ask "does every required path exist?", this asks "does every existing path have a reason to be there?".
+
 ### Validation
 
 REQ-014: `site/scripts/validate-content.mjs` MUST exist.
@@ -106,6 +110,7 @@ REQ-027: `AGENTS.md` MUST contain a section titled `## Markdown Authoring Rules`
 ### Repository Orientation
 
 REQ-028: The repository MUST contain `QUICKSTART.md` at repository root documenting repository orientation, build instructions, and contribution guidance.
+REQ-043: `QUICKSTART.md` MUST contain a section titled `## Bootstrapping Your Own Spec`, documenting how an operator forking this repo replaces the canonical content, decides whether to rename the required section headers for their domain (and updates `scripts/validate-structure.sh` accordingly if so), sets code review ownership, confirms the default branch, enables GitHub Pages, and validates conformance before publishing their own specification.
 
 ### README Mirror Invariant
 
@@ -191,7 +196,7 @@ A non-empty diff is non-conformance.
 Agent: An autonomous coding system that reads and applies repository specifications.
 Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
 Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
-Conformant repository: A repository that satisfies REQ-001 through REQ-042 and passes section 6 validation.
+Conformant repository: A repository that satisfies REQ-001 through REQ-044 and passes section 6 validation.
 README mirror: The invariant that `README.md` is a byte-for-byte regenerated copy of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and never hand-edited.
 Atomic publication: A publish model where partial deployment is impossible.
 
@@ -213,6 +218,8 @@ This section intentionally does not restate the version number, to avoid the two
 | 2.3.0 | 2026-07-25 | Added REQ-040, formalizing site/app/favicon.ico as a required conformance artifact; removed the orphaned site/README.md in favor of QUICKSTART.md's existing Website section, which already documented the same build/preview workflow |
 | 2.4.0 | 2026-07-25 | Added REQ-041, formalizing site/.eslintrc.json as a required conformance artifact (its absence silently disables next build's lint gate rather than falling back to defaults); removed the orphaned site/.prettierrc.json, site/.prettierignore, and the prettier/eslint-config-prettier devDependencies and eslintrc extends entry that referenced them, none of which were ever wired into any script or CI step |
 | 2.5.0 | 2026-07-25 | Added REQ-042, formalizing scripts/, site/app/, and site/components/ as required directories in validate-structure.sh's own REQUIRED_DIRS check, closing a redundant-but-real gap where these directories' existence was only ever implied by their required files, never asserted directly |
+| 2.6.0 | 2026-07-25 | Added REQ-043, formalizing QUICKSTART.md's new Bootstrapping Your Own Spec section (including guidance on renaming seed-doc.md's required section headers for a new domain, and updating validate-structure.sh's matching check if so) as a required conformance artifact; removed a stray timestamped branch name from publish-site.yml's push trigger and annotated .github/CODEOWNERS to prompt forking operators to replace the owner handle |
+| 2.7.0 | 2026-07-25 | Added REQ-044, formalizing scripts/audit-repo.sh as a required, executable, governance-check.yml-invoked conformance artifact that fails if any file/directory on disk is not accounted for in validate-structure.sh's REQUIRED_FILES/REQUIRED_DIRS or explicitly exempted as repo hygiene, closing the loop opened by REQ-001 through REQ-042's forward existence checks with a reverse accounting check |
 
 Version policy.
 MAJOR increments change conformance semantics.

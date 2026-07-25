@@ -13,6 +13,20 @@ The same canonical markdown files are simultaneously:
 
 There is exactly one copy of every canonical document; the website is a rendering of the repo, never a parallel content store.
 
+## Bootstrapping Your Own Spec
+
+Forking or cloning this repo to publish your own atomic specification (any domain, not necessarily about SpecPubSpec itself)? This repo's own `docs/seed-doc.md` currently *is* the SpecPubSpec specification (it dogfoods itself), but nothing about the tooling requires that. `scripts/validate-structure.sh` only checks that `docs/seed-doc.md` contains `## Core`, `## Repository Structure`, and `## Version` section headers — it is domain-agnostic and never checks for specific `REQ-NNN` numbers or content. To publish your own spec:
+
+1. **Prerequisites**: git, Node.js 20 LTS, and npm.
+2. **Replace the canonical content**: rewrite `docs/seed-doc.md` with your own specification, keeping the `## Core`, `## Repository Structure`, and `## Version` headers (any content under them is yours to define; you do not need to keep this repo's REQ-001 through REQ-043, which describe SpecPubSpec's own dogfooding, not your domain).
+3. **Rename the section headers if they don't fit your domain**: `## Core`/`## Repository Structure`/`## Version` are this repo's own naming choice, not a fixed requirement of the tooling. If your specification calls for different section names, you may rename them — but you must also update the matching literal strings in the `for section in "## Core" "## Repository Structure" "## Version"` check inside `scripts/validate-structure.sh` (search for "Validate docs/seed-doc.md has required sections"), or the build will fail looking for headers that no longer exist.
+4. **Leave REQ-042 and REQ-043's checks alone**: the required-directories check (`scripts/`, `site/app/`, `site/components/`) and the requirement that `QUICKSTART.md` contain this Bootstrapping section govern the site-generator scaffold and this onboarding doc itself, not your spec's subject matter — they apply unchanged regardless of your domain.
+5. **Set code review ownership**: edit `.github/CODEOWNERS`, replacing the existing handle with your own GitHub username or team.
+6. **Confirm your default branch**: `.github/workflows/publish-site.yml` deploys on push to `main`; rename that trigger if your repository's default branch is named differently.
+7. **Enable GitHub Pages**: in your repository's Settings → Pages, set Source to "GitHub Actions" (a one-time manual step; without it, `publish-site.yml`'s deploy job has nothing to publish to).
+8. **Regenerate and validate**: run `scripts/sync-readme.sh` to regenerate `README.md`, then `scripts/validate-structure.sh` to confirm conformance before committing.
+9. **Preview locally**, then push to your default branch to trigger `publish-site.yml` — see the Website section below for build/preview commands.
+
 ## Canonical document
 
 | Document | Path | Rendered at |
