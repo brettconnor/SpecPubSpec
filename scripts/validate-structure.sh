@@ -39,6 +39,7 @@ REQUIRED_FILES=(
   "site/package-lock.json"
   "site/scripts/check-links.mjs"
   "site/app/favicon.ico"
+  "site/.eslintrc.json"
 )
 
 # Files that must be executable (REQ-030)
