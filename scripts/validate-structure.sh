@@ -109,7 +109,7 @@ for file in "${REQUIRED_EXECUTABLE_FILES[@]}"; do
   fi
 done
 
-# Validate README.md has zero drift from docs/seed-doc.md (REQ-032, REQ-034)
+# Validate README.md has zero drift from docs/seed-doc.md (REQ-032)
 if [ -f scripts/sync-readme.sh ] && [ -f README.md ]; then
   tmp_readme="$(mktemp)"
   if scripts/sync-readme.sh --target-path "$tmp_readme" >/dev/null; then
@@ -259,7 +259,7 @@ if [ -f .github/workflows/site-build-check.yml ]; then
   fi
 fi
 
-# Validate CODEOWNERS contains at least one non-comment ownership rule (REQ-035)
+# Validate CODEOWNERS contains at least one non-comment ownership rule (REQ-034)
 if [ -f .github/CODEOWNERS ]; then
   if ! grep -vE '^[[:space:]]*(#.*)?$' .github/CODEOWNERS | grep -q .; then
     echo "FAIL: .github/CODEOWNERS must contain at least one non-comment ownership rule" >&2
@@ -267,7 +267,7 @@ if [ -f .github/CODEOWNERS ]; then
   fi
 fi
 
-# Validate governance-check.yml dogfoods this specification's own conformance (REQ-036)
+# Validate governance-check.yml dogfoods this specification's own conformance (REQ-035)
 if [ -f .github/workflows/governance-check.yml ]; then
   if ! grep -q "validate-structure.sh" .github/workflows/governance-check.yml; then
     echo "FAIL: .github/workflows/governance-check.yml must invoke scripts/validate-structure.sh" >&2
