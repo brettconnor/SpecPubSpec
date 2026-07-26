@@ -10,13 +10,22 @@ on:
       - 'docs/**'
       - 'scripts/validate-structure.sh'
 
+# Least-privilege GITHUB_TOKEN: this workflow only builds the site and checks
+# links against the checked-out tree; it never writes to the repo or deploys.
+# Without this block, the token defaults to a broader permission set, which
+# matters more on a public repo where pull_request runs can be triggered by
+# outside contributors (forks).
+permissions:
+  contents: read
+
 jobs:
   build-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
           cache: 'npm'

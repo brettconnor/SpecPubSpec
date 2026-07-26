@@ -4,12 +4,21 @@ on:
   push: {}
   pull_request: {}
 
+# Least-privilege GITHUB_TOKEN: this workflow only ever reads the checked-out
+# tree to run validation scripts; it never needs to write to the repo, open
+# PRs, or touch any other GitHub API scope. Without this block, the token
+# defaults to a broader permission set, which matters more on a public repo
+# where pull_request runs can be triggered by outside contributors.
+permissions:
+  contents: read
+
 jobs:
   governance-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Validate SpecPubSpec conformance (dogfood docs/seed-doc.md's full normative requirement set)
         run: bash scripts/validate-structure.sh
