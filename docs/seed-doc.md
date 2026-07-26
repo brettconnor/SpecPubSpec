@@ -1,6 +1,6 @@
 # Agentic Specification Publication Specification
 
-Version: 4.0.0.
+Version: 5.0.0.
 Status: Standard.
 Date: 2026-07-25.
 
@@ -12,7 +12,7 @@ A SpecPubSpec-conformant repository has exactly one canonical source of truth an
 ## Conformance
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
-A repository conforms to this specification only if it satisfies REQ-001 through REQ-037 and passes the validation contract in section 6.
+A repository conforms to this specification only if it satisfies REQ-001 through REQ-036 and passes the validation contract in section 6.
 
 ---
 
@@ -76,7 +76,7 @@ REQ-015: The repository MUST contain `site/.eslintrc.json`. `next build` runs it
 
 ### Required Directories
 
-REQ-016: The repository MUST contain the directories `docs/`, `site/`, `site/lib/`, `site/scripts/`, `.github/`, `.github/workflows/`, `scripts/`, `site/app/`, and `site/components/`. The latter three (`scripts/`, `site/app/`, `site/components/`) house the files already mandated by REQ-010, REQ-011, REQ-012, REQ-017, and REQ-034; the rest each house exactly one other REQUIRED_FILES entry (`docs/seed-doc.md`, `site/package.json`, `site/lib/content.ts`, `site/scripts/validate-content.mjs`, `.github/CODEOWNERS`, `.github/workflows/publish-site.yml`, respectively) and are asserted directly here rather than left implied by those files' existence.
+REQ-016: The repository MUST contain the directories `docs/`, `site/`, `site/lib/`, `site/scripts/`, `.github/`, `.github/workflows/`, `scripts/`, `site/app/`, and `site/components/`. The latter three (`scripts/`, `site/app/`, `site/components/`) house the files already mandated by REQ-010, REQ-011, REQ-012, REQ-017, and REQ-033; the rest each house exactly one other REQUIRED_FILES entry (`docs/seed-doc.md`, `site/package.json`, `site/lib/content.ts`, `site/scripts/validate-content.mjs`, `.github/CODEOWNERS`, `.github/workflows/publish-site.yml`, respectively) and are asserted directly here rather than left implied by those files' existence.
 
 ### Repository-Wide Accounting
 
@@ -116,23 +116,21 @@ REQ-030: `AGENTS.md` MUST contain a section titled `## Markdown Authoring Rules`
 
 ### Repository Orientation
 
-REQ-031: The repository MUST contain `QUICKSTART.md` at repository root documenting repository orientation, build instructions, and contribution guidance.
-
-REQ-032: `QUICKSTART.md` MUST contain a section titled `## Bootstrapping Your Own Spec`, documenting how an operator forking this repo replaces the canonical content, decides whether to rename the required section headers for their domain (and updates `scripts/validate-structure.sh` accordingly if so), sets code review ownership, confirms the default branch, enables GitHub Pages, and validates conformance before publishing their own specification.
+REQ-031: `QUICKSTART.md` MUST contain a section titled `## Bootstrapping Your Own Spec`, documenting how an operator forking this repo replaces the canonical content, decides whether to rename the required section headers for their domain (and updates `scripts/validate-structure.sh` accordingly if so), sets code review ownership, confirms the default branch, enables GitHub Pages, and validates conformance before publishing their own specification.
 
 ### README Mirror Invariant
 
-REQ-033: `README.md` MUST be generated as a byte-for-byte mirror of `docs/seed-doc.md` and MUST NOT be hand-edited.
+REQ-032: `README.md` MUST be generated as a byte-for-byte mirror of `docs/seed-doc.md` and MUST NOT be hand-edited.
 
-REQ-034: `scripts/sync-readme.sh` MUST exist, MUST be executable, and MUST support a `--target-path` option for drift-checking without overwriting the checked-in `README.md`.
+REQ-033: `scripts/sync-readme.sh` MUST exist, MUST be executable, and MUST support a `--target-path` option for drift-checking without overwriting the checked-in `README.md`.
 
-REQ-035: Continuous integration MUST verify `README.md` has zero drift from `docs/seed-doc.md` and MUST fail the workflow run if drift is detected.
+REQ-034: Continuous integration MUST verify `README.md` has zero drift from `docs/seed-doc.md` and MUST fail the workflow run if drift is detected.
 
 ### Governance Enforcement
 
-REQ-036: The repository MUST contain `.github/CODEOWNERS` containing at least one non-comment ownership rule requiring review of governed artifacts.
+REQ-035: The repository MUST contain `.github/CODEOWNERS` containing at least one non-comment ownership rule requiring review of governed artifacts.
 
-REQ-037: `.github/workflows/governance-check.yml` MUST exist and MUST invoke `scripts/validate-structure.sh` on both `push` and `pull_request` triggers, so this specification's own conformance is dogfooded by CI rather than left to manual review.
+REQ-036: `.github/workflows/governance-check.yml` MUST exist and MUST invoke `scripts/validate-structure.sh` on both `push` and `pull_request` triggers, so this specification's own conformance is dogfooded by CI rather than left to manual review.
 
 ---
 
@@ -146,16 +144,16 @@ The following paths are REQUIRED for conformance.
 |---|---|---|
 | `docs/seed-doc.md` | Canonical specification document | REQ-001, REQ-002, REQ-026, REQ-027, REQ-028 |
 | `AGENTS.md` | Repository map and authoring rules | REQ-004, REQ-029, REQ-030 |
-| `README.md` | Repository entry point; generated mirror of the canonical document | REQ-005, REQ-033 |
+| `README.md` | Repository entry point; generated mirror of the canonical document | REQ-005, REQ-032 |
 | `site/lib/content.ts` | Canonical document loader | REQ-006, REQ-007 |
 | `site/scripts/validate-content.mjs` | Pre-build content validation | REQ-018, REQ-019, REQ-020 |
 | `scripts/validate-structure.sh` | Structure conformance validation | REQ-021 |
 | `.github/workflows/publish-site.yml` | Publish workflow | REQ-022, REQ-023 |
 | `.github/workflows/site-build-check.yml` | Pull-request build workflow | REQ-024, REQ-025 |
 | `QUICKSTART.md` | Repository orientation, build, and contribution guide | REQ-031 |
-| `scripts/sync-readme.sh` | Regenerates README.md as a mirror of docs/seed-doc.md | REQ-033, REQ-034 |
-| `.github/CODEOWNERS` | Review ownership of governed artifacts | REQ-036 |
-| `.github/workflows/governance-check.yml` | Dogfoods this specification's own conformance in CI | REQ-037 |
+| `scripts/sync-readme.sh` | Regenerates README.md as a mirror of docs/seed-doc.md | REQ-032, REQ-033 |
+| `.github/CODEOWNERS` | Review ownership of governed artifacts | REQ-035 |
+| `.github/workflows/governance-check.yml` | Dogfoods this specification's own conformance in CI | REQ-036 |
 | `site/package.json` | Site build/lint/dev script definitions | REQ-008, REQ-019 |
 | `site/next.config.mjs`, `site/tsconfig.json` | Site generator configuration | REQ-009 |
 | `site/app/layout.tsx`, `site/app/page.tsx`, `site/app/globals.css` | Root route rendering the canonical document | REQ-010 |
@@ -201,7 +199,7 @@ echo $?  # MUST output 0
 
 A non-zero exit code is non-conformance.
 
-`scripts/sync-readme.sh` enforces REQ-033 through REQ-035 by regenerating `README.md` from `docs/seed-doc.md`.
+`scripts/sync-readme.sh` enforces REQ-032 through REQ-034 by regenerating `README.md` from `docs/seed-doc.md`.
 Conformance also requires a zero-diff comparison between the checked-in `README.md` and the output of `scripts/sync-readme.sh --target-path <tmp-file>`.
 A non-empty diff is non-conformance.
 
@@ -219,7 +217,7 @@ A non-empty diff is non-conformance.
 Agent: An autonomous coding system that reads and applies repository specifications.
 Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
 Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
-Conformant repository: A repository that satisfies REQ-001 through REQ-037 and passes section 6 validation.
+Conformant repository: A repository that satisfies REQ-001 through REQ-036 and passes section 6 validation.
 README mirror: The invariant that `README.md` is a byte-for-byte regenerated copy of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and never hand-edited.
 Atomic publication: A publish model where partial deployment is impossible.
 
@@ -247,6 +245,7 @@ This section intentionally does not restate the version number, to avoid the two
 | 3.0.1 | 2026-07-25 | Formatting fix: inserted a blank line between every consecutive REQ-NNN line in the Normative Requirements section. Consecutive lines with no blank line between them collapse into a single run-on paragraph under CommonMark (the site's rendering pipeline), making the rendered page hard for a human to scan; each REQ now renders as its own paragraph. No wording, numbering, or conformance semantics changed |
 | 3.1.0 | 2026-07-25 | Tightened residual testability gaps found in a follow-up review of the Repository Structure section: widened REQ-016 to assert all 9 REQUIRED_DIRS directories directly (6 of the 9 were previously enforced by validate-structure.sh but never stated as a MUST by any REQ) and added their rows to the Required Paths table; added a validate-structure.sh check that publish-site.yml's deploy job actually declares `needs: build` (REQ-024's "build-then-deploy job sequence" claim was previously untested); reworded REQ-020 and REQ-022 to name their actual enforcement point (validate-content.mjs at build time; the script's own self-referential exit-code contract, respectively) instead of implying scripts/validate-structure.sh checks them directly; reworded Forbidden Pattern 3 to document that it's enforced indirectly by REQ-017's exhaustive reverse-accounting audit rather than by independent duplicate-content detection. No REQ was renumbered or removed; this is a MINOR change (added/clarified enforcement, no new required repository state) |
 | 4.0.0 | 2026-07-25 | Removed old REQ-022 ("structure validation MUST return exit code 0 on conformance and non-zero on violation"): on review, this REQ is not independently, deterministically dogfoodable — it is scripts/validate-structure.sh's own self-referential contract, restated (and already normatively stated) verbatim by the Validation Contract's `echo $?  # MUST output 0` block in section 6, with nothing external to check it against. A requirement this specification cannot verify about itself is out of scope for the REQ set. Renumbered old REQ-023 through REQ-038 down to REQ-022 through REQ-037 to close the gap. This is a MAJOR change: every REQ-NNN identifier from old REQ-023 onward shifted down by one |
+| 5.0.0 | 2026-07-25 | Removed old REQ-031 ("the repository MUST contain QUICKSTART.md at repository root documenting repository orientation, build instructions, and contribution guidance"): its file-existence claim was already redundant with QUICKSTART.md's entry in validate-structure.sh's REQUIRED_FILES array, and its "documenting orientation, build instructions, and contribution guidance" clause was never content-checked by any script — an untestable prose restatement of the same non-normative pattern removed in 3.0.0. Its concrete, testable successor, old REQ-032 (QUICKSTART.md MUST contain a `## Bootstrapping Your Own Spec` section, which validate-structure.sh does grep for), already subsumes it. Renumbered old REQ-032 through REQ-037 down to REQ-031 through REQ-036 to close the gap. This is a MAJOR change: every REQ-NNN identifier from old REQ-032 onward shifted down by one |
 
 Version policy.
 MAJOR increments change conformance semantics.
