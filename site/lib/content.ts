@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process';
 import matter from 'gray-matter';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 
@@ -72,6 +73,7 @@ function stripFirstH1(markdown: string): string {
 async function renderMarkdown(markdown: string): Promise<string> {
   const file = await unified()
     .use(remarkParse)
+    .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeStringify)
     .process(markdown);
