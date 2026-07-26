@@ -5,7 +5,7 @@
 
 # Agentic Specification Publication Specification
 
-Version: 6.0.0.
+Version: 6.0.1.
 Status: Standard.
 Date: 2026-07-25.
 
@@ -81,7 +81,7 @@ REQ-015: The repository MUST contain `site/.eslintrc.json`. `next build` runs it
 
 ### Required Directories
 
-REQ-016: The repository MUST contain the directories `docs/`, `site/`, `site/lib/`, `site/scripts/`, `.github/`, `.github/workflows/`, `scripts/`, `site/app/`, and `site/components/`. The latter three (`scripts/`, `site/app/`, `site/components/`) house the files already mandated by REQ-010, REQ-011, REQ-012, REQ-017, and REQ-033; the rest each house exactly one other REQUIRED_FILES entry (`docs/seed-doc.md`, `site/package.json`, `site/lib/content.ts`, `site/scripts/validate-content.mjs`, `.github/CODEOWNERS`, `.github/workflows/publish-site.yml`, respectively) and are asserted directly here rather than left implied by those files' existence.
+REQ-016: The repository MUST contain the directories `docs/`, `site/`, `site/lib/`, `site/scripts/`, `.github/`, `.github/workflows/`, `scripts/`, `site/app/`, and `site/components/`. Each directory houses one or more files already mandated elsewhere in this section (see the Required Paths table below for the exact file-to-REQ mapping); this REQ additionally asserts each directory's own existence, rather than leaving it implied by its files.
 
 ### Repository-Wide Accounting
 
@@ -202,7 +202,7 @@ echo $?  # MUST output 0
 
 A non-zero exit code is non-conformance.
 
-`scripts/sync-readme.sh` enforces REQ-032 through REQ-034 by regenerating `README.md` from `docs/seed-doc.md`.
+`scripts/sync-readme.sh` enforces REQ-032 and REQ-033 by regenerating `README.md` from `docs/seed-doc.md`.
 Conformance also requires a zero-diff comparison between the checked-in `README.md` and the output of `scripts/sync-readme.sh --target-path <tmp-file>`.
 A non-empty diff is non-conformance.
 
@@ -250,6 +250,7 @@ This section intentionally does not restate the version number, to avoid the two
 | 4.0.0 | 2026-07-25 | Removed old REQ-022 ("structure validation MUST return exit code 0 on conformance and non-zero on violation"): on review, this REQ is not independently, deterministically dogfoodable — it is scripts/validate-structure.sh's own self-referential contract, restated (and already normatively stated) verbatim by the Validation Contract's `echo $?  # MUST output 0` block in section 6, with nothing external to check it against. A requirement this specification cannot verify about itself is out of scope for the REQ set. Renumbered old REQ-023 through REQ-038 down to REQ-022 through REQ-037 to close the gap. This is a MAJOR change: every REQ-NNN identifier from old REQ-023 onward shifted down by one |
 | 5.0.0 | 2026-07-25 | Removed old REQ-031 ("the repository MUST contain QUICKSTART.md at repository root documenting repository orientation, build instructions, and contribution guidance"): its file-existence claim was already redundant with QUICKSTART.md's entry in validate-structure.sh's REQUIRED_FILES array, and its "documenting orientation, build instructions, and contribution guidance" clause was never content-checked by any script — an untestable prose restatement of the same non-normative pattern removed in 3.0.0. Its concrete, testable successor, old REQ-032 (QUICKSTART.md MUST contain a `## Bootstrapping Your Own Spec` section, which validate-structure.sh does grep for), already subsumes it. Renumbered old REQ-032 through REQ-037 down to REQ-031 through REQ-036 to close the gap. This is a MAJOR change: every REQ-NNN identifier from old REQ-032 onward shifted down by one |
 | 6.0.0 | 2026-07-25 | Merged old REQ-032 ("README.md MUST be generated as a byte-for-byte mirror of docs/seed-doc.md and MUST NOT be hand-edited") and old REQ-034 ("continuous integration MUST verify README.md has zero drift from docs/seed-doc.md and MUST fail the workflow run if drift is detected") into one requirement: both were enforced by the exact same drift-check code in scripts/validate-structure.sh, making them duplicate REQ numbers for a single check rather than two independently testable requirements. New REQ-032 states the mirror invariant and its CI-enforcement in one sentence. Renumbered old REQ-033 (sync-readme.sh script requirement) to REQ-033 (unchanged position, now directly following the merged REQ-032), and old REQ-035/REQ-036 (CODEOWNERS, governance-check.yml) down to REQ-034/REQ-035. This is a MAJOR change: every REQ-NNN identifier from old REQ-034 onward shifted down by one, and old REQ-034 no longer exists as a separate identifier |
+| 6.0.1 | 2026-07-25 | Full review pass over the (now 35-item) REQ set found two stale cross-references left over from 6.0.0's REQ-032/REQ-034 merge: the Validation section claimed `scripts/sync-readme.sh` enforces "REQ-032 through REQ-034" (REQ-034 is CODEOWNERS, unrelated to sync-readme.sh; corrected to "REQ-032 and REQ-033"), and REQ-016's directory-to-REQ cross-reference list omitted REQ-021 (`scripts/validate-structure.sh`, which also lives in `scripts/`). Reworded REQ-016 to reference the Required Paths table instead of hardcoding a REQ-number list, since that hardcoded-list pattern is exactly what went stale here and previously in REQ-017 (fixed in 3.0.0). No REQ was added, removed, or renumbered, and no testable behavior changed; this is a PATCH |
 
 Version policy.
 MAJOR increments change conformance semantics.
