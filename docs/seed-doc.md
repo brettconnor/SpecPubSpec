@@ -1,12 +1,12 @@
 # Agentic Specification Publication Specification
 
-Version: 3.0.1.
+Version: 3.1.0.
 Status: Standard.
 Date: 2026-07-25.
 
 ## Abstract
 
-This document specifies SpecPubSpec, a repository pattern for publishing specifications that are simultaneously machine-readable by coding agents and human-browsable as rendered documentation.
+This document specifies the Agentic Specification Publication Specification (SpecPubSpec), a repository pattern for publishing specifications that are simultaneously machine-readable by coding agents and human-browsable as rendered documentation.
 A SpecPubSpec-conformant repository has exactly one canonical source of truth and prevents content drift between source and site.
 
 ## Conformance
@@ -76,7 +76,7 @@ REQ-015: The repository MUST contain `site/.eslintrc.json`. `next build` runs it
 
 ### Required Directories
 
-REQ-016: The repository MUST contain the directories `scripts/`, `site/app/`, and `site/components/`, housing the files already mandated by REQ-010, REQ-011, REQ-012, REQ-017, and REQ-035.
+REQ-016: The repository MUST contain the directories `docs/`, `site/`, `site/lib/`, `site/scripts/`, `.github/`, `.github/workflows/`, `scripts/`, `site/app/`, and `site/components/`. The latter three (`scripts/`, `site/app/`, `site/components/`) house the files already mandated by REQ-010, REQ-011, REQ-012, REQ-017, and REQ-035; the rest each house exactly one other REQUIRED_FILES entry (`docs/seed-doc.md`, `site/package.json`, `site/lib/content.ts`, `site/scripts/validate-content.mjs`, `.github/CODEOWNERS`, `.github/workflows/publish-site.yml`, respectively) and are asserted directly here rather than left implied by those files' existence.
 
 ### Repository-Wide Accounting
 
@@ -88,11 +88,11 @@ REQ-018: `site/scripts/validate-content.mjs` MUST exist.
 
 REQ-019: Content validation MUST execute before site generation; `site/package.json`'s `build` script MUST invoke `validate-content.mjs` (or an equivalent content-validation step) before `next build` runs, not merely define a `build` script that happens to exist.
 
-REQ-020: Build MUST fail if a canonical document is missing or malformed.
+REQ-020: Build MUST fail if a canonical document is missing or malformed. This is enforced by `site/scripts/validate-content.mjs` (REQ-018) actually running and exiting non-zero at build time — verified when CI executes `npm run build` — not by `scripts/validate-structure.sh`, which only checks that `validate-content.mjs` exists and runs before `next build` (REQ-019), not what it decides.
 
 REQ-021: `scripts/validate-structure.sh` MUST exist and be executable.
 
-REQ-022: Structure validation MUST return exit code 0 on conformance and non-zero on violation.
+REQ-022: Structure validation MUST return exit code 0 on conformance and non-zero on violation. This is `scripts/validate-structure.sh`'s own self-referential contract — nothing else independently verifies it — checked directly by running it per the Validation Contract in section 6.
 
 ### Continuous Integration
 
@@ -167,12 +167,21 @@ The following paths are REQUIRED for conformance.
 | `site/scripts/check-links.mjs` | Broken internal link check in PR build-check workflow | REQ-014 |
 | `site/.eslintrc.json` | `next build`'s lint-gate configuration | REQ-015 |
 | `scripts/audit-repo.sh` | Reverse-accounting audit: every on-disk path has a reason to exist | REQ-017 |
+| `docs/` | Canonical document directory | REQ-016 |
+| `site/` | Site generator root | REQ-016 |
+| `site/lib/` | Canonical document loader directory | REQ-016 |
+| `site/scripts/` | Site build/validation script directory | REQ-016 |
+| `.github/` | Repository governance root | REQ-016 |
+| `.github/workflows/` | CI workflow directory | REQ-016 |
+| `scripts/` | Repository conformance script directory | REQ-016 |
+| `site/app/` | Next.js app router directory | REQ-016 |
+| `site/components/` | Site rendering component directory | REQ-016 |
 
 ### Forbidden Patterns
 
 1. Creating `site/content/` or `site/docs/`.
 2. Using symbolic links for canonical documents.
-3. Storing duplicate canonical content in parallel locations.
+3. Storing duplicate canonical content in parallel locations. Not independently checked by content-diffing; enforced as a side effect of REQ-017's exhaustive reverse-accounting audit, which fails on any on-disk path — including an accidental duplicate — that isn't a `REQUIRED_FILES`/`REQUIRED_DIRS` entry or an explicit `EXEMPT_PATHS` exemption.
 4. Hand-editing `README.md` instead of regenerating it via `scripts/sync-readme.sh`.
 
 ---
@@ -238,6 +247,7 @@ This section intentionally does not restate the version number, to avoid the two
 | 2.7.0 | 2026-07-25 | Added REQ-044, formalizing scripts/audit-repo.sh as a required, executable, governance-check.yml-invoked conformance artifact that fails if any file/directory on disk is not accounted for in validate-structure.sh's REQUIRED_FILES/REQUIRED_DIRS or explicitly exempted as repo hygiene, closing the loop opened by REQ-001 through REQ-042's forward existence checks with a reverse accounting check |
 | 3.0.0 | 2026-07-25 | Post-completion audit of the requirement set: renumbered REQ-001 through REQ-044 to REQ-001 through REQ-038 in strict document reading order (numbers had drifted to reflect the chronological order requirements were added rather than where they appear in the document); removed REQ-002 ("sole canonical document"), old REQ-005 ("generator reads directly at build time"), old REQ-008 ("AGENTS.md documents structure and rules"), and old REQ-010/REQ-011 (generic "site/ includes a generator"/"renders without manual copying") as non-normative restatements of Principles with no independent enforcement; merged old REQ-004 and REQ-006 into one REQ-003 covering both the general no-copies rule and its concrete forbidden-directory check; dropped README.md's unenforceable "describing the dual-purpose model" clause (old REQ-009, now REQ-005) since that's automatically satisfied by the README-mirror invariant; added real validate-structure.sh checks for REQ-019 (build script must invoke content validation before next build, not merely exist), REQ-024/REQ-026 (publish-site.yml push-to-main trigger and site-build-check.yml pull_request-trigger-without-deploy content checks), and REQ-037 (CODEOWNERS must contain at least one non-comment ownership rule); fixed old REQ-042 (now REQ-016)'s stale cross-reference, which predated and omitted scripts/audit-repo.sh even though that file also lives in scripts/; reworded REQ-017's reverse-check description to reference "the REQ items above" instead of a hardcoded numeric range, so it can no longer go stale as REQs are added or removed. This is a MAJOR change: every externally-cited REQ-NNN identifier's meaning shifted |
 | 3.0.1 | 2026-07-25 | Formatting fix: inserted a blank line between every consecutive REQ-NNN line in the Normative Requirements section. Consecutive lines with no blank line between them collapse into a single run-on paragraph under CommonMark (the site's rendering pipeline), making the rendered page hard for a human to scan; each REQ now renders as its own paragraph. No wording, numbering, or conformance semantics changed |
+| 3.1.0 | 2026-07-25 | Tightened residual testability gaps found in a follow-up review of the Repository Structure section: widened REQ-016 to assert all 9 REQUIRED_DIRS directories directly (6 of the 9 were previously enforced by validate-structure.sh but never stated as a MUST by any REQ) and added their rows to the Required Paths table; added a validate-structure.sh check that publish-site.yml's deploy job actually declares `needs: build` (REQ-024's "build-then-deploy job sequence" claim was previously untested); reworded REQ-020 and REQ-022 to name their actual enforcement point (validate-content.mjs at build time; the script's own self-referential exit-code contract, respectively) instead of implying scripts/validate-structure.sh checks them directly; reworded Forbidden Pattern 3 to document that it's enforced indirectly by REQ-017's exhaustive reverse-accounting audit rather than by independent duplicate-content detection. No REQ was renumbered or removed; this is a MINOR change (added/clarified enforcement, no new required repository state) |
 
 Version policy.
 MAJOR increments change conformance semantics.

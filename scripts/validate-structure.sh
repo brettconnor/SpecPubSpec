@@ -231,13 +231,18 @@ if [ -f site/package.json ]; then
   fi
 fi
 
-# Validate publish-site.yml triggers on pushes to main (REQ-024)
+# Validate publish-site.yml triggers on pushes to main and deploys only
+# after a build job completes (REQ-024)
 if [ -f .github/workflows/publish-site.yml ]; then
   if ! grep -q "^  push:" .github/workflows/publish-site.yml; then
     echo "FAIL: .github/workflows/publish-site.yml must trigger on push" >&2
     fail=1
   elif ! grep -A5 "^  push:" .github/workflows/publish-site.yml | grep -q "main"; then
     echo "FAIL: .github/workflows/publish-site.yml's push trigger must target the main branch" >&2
+    fail=1
+  fi
+  if ! grep -qE "^\s*needs:\s*build\b" .github/workflows/publish-site.yml; then
+    echo "FAIL: .github/workflows/publish-site.yml must deploy via a job that 'needs: build', not deploy independently" >&2
     fail=1
   fi
 fi
