@@ -11,6 +11,7 @@ There is exactly one copy of every canonical document; the website is a renderin
 ## Repository Map
 
 - `docs/seed-doc.md` — the sole canonical document: the SpecPubSpec normative specification (see its own Conformance section for the current REQ-NNN range and `## Version` section for the current version number; not restated here to avoid this file drifting out of sync).
+  Its repository-relative path is a single value, `SPEC_PATH` in `scripts/validate-structure.sh`, read by `scripts/sync-readme.sh`, `site/lib/content.ts`, and `site/scripts/validate-content.mjs`, so renaming the canonical document (e.g. to `docs/my-test-spec.md`) requires editing only that one variable.
   Read this first: it states the non-negotiable principles and normative requirements every change in this repo must satisfy.
 - `README.md` — a **generated, byte-for-byte mirror** of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and drift-checked in `.github/workflows/governance-check.yml`.
   It exists to reinforce the canonical document as the source of truth on the repo's default landing page.

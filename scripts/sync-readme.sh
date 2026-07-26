@@ -7,6 +7,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Set the repository root as one level above this script folder.
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# Single source of truth for the canonical document's repository-relative
+# path: SPEC_PATH, defined once in scripts/validate-structure.sh (sourced
+# here, the same way scripts/audit-repo.sh reuses that script's arrays). A
+# fork/clone renames its canonical document by editing that one variable.
+source "$SCRIPT_DIR/validate-structure.sh"
+
 # Start with default runtime options that callers can override with flags.
 TARGET_PATH="$REPO_ROOT/README.md"
 
@@ -16,9 +22,11 @@ usage() {
 Usage: scripts/sync-readme.sh [options]
 
 Purpose:
-  Regenerate README.md as a byte-for-byte mirror of docs/seed-doc.md, so the
-  canonical document is reinforced as the source of truth on the repo's
-  default landing page, with no risk of manual drift between the two files.
+  Regenerate README.md as a byte-for-byte mirror of the canonical document
+  named in scripts/validate-structure.sh's SPEC_PATH variable (docs/seed-doc.md
+  by default), so the canonical document is reinforced as the source of truth
+  on the repo's default landing page, with no risk of manual drift between
+  the two files.
 
 Options:
   --target-path <path>   Write the generated file here instead of README.md.
@@ -29,7 +37,8 @@ Options:
 
 Output:
   Overwrites the target file with a generated-file banner followed by the
-  verbatim content of docs/seed-doc.md.
+  verbatim content of the canonical document (see SPEC_PATH in
+  scripts/validate-structure.sh).
 EOF
 }
 
@@ -79,7 +88,7 @@ parse_args() {
 
 # Run preflight validation checks before script-specific logic.
 validate_environment() {
-  require_file "$REPO_ROOT/docs/seed-doc.md"
+  require_file "$REPO_ROOT/$SPEC_PATH"
   # Validate the target's parent directory exists so writes fail fast with a
   # clear error instead of an opaque redirection failure.
   require_dir "$(dirname "$TARGET_PATH")"
@@ -91,7 +100,7 @@ main() {
   parse_args "$@"
   validate_environment
 
-  local canonical_source_file="$REPO_ROOT/docs/seed-doc.md"
+  local canonical_source_file="$REPO_ROOT/$SPEC_PATH"
 
   # Re-verify the canonical source immediately before reading it, minimizing
   # the window between the preflight check and the actual read.
@@ -99,14 +108,14 @@ main() {
 
   {
     echo "<!-- GENERATED FILE: do not edit directly. -->"
-    echo "<!-- Source of truth: docs/seed-doc.md -->"
+    echo "<!-- Source of truth: $SPEC_PATH -->"
     echo "<!-- Regenerate with: scripts/sync-readme.sh -->"
     echo "<!-- Repository orientation, build, and contribution instructions: QUICKSTART.md -->"
     echo
     cat "$canonical_source_file"
   } > "$TARGET_PATH"
 
-  log "Regenerated: $TARGET_PATH (from docs/seed-doc.md)"
+  log "Regenerated: $TARGET_PATH (from $SPEC_PATH)"
 }
 
 main "$@"

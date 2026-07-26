@@ -14,8 +14,23 @@ import matter from 'gray-matter';
 
 const REPO_ROOT = path.resolve(process.cwd(), '..');
 
+// Single source of truth for the canonical document's repository-relative
+// path: the SPEC_PATH variable defined once in scripts/validate-structure.sh
+// (see site/lib/content.ts, which parses the same file the same way). A
+// fork/clone renames its canonical document by editing that one variable
+// instead of this literal array.
+function readSpecPath() {
+  const scriptPath = path.join(REPO_ROOT, 'scripts/validate-structure.sh');
+  const script = fs.readFileSync(scriptPath, 'utf-8');
+  const match = script.match(/^SPEC_PATH="([^"]+)"/m);
+  if (!match) {
+    throw new Error(`Could not find SPEC_PATH="..." in ${scriptPath}`);
+  }
+  return match[1];
+}
+
 const CANONICAL_SOURCE_PATHS = [
-  'docs/seed-doc.md',
+  readSpecPath(),
 ];
 
 let hasFailure = false;

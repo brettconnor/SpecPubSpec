@@ -5,9 +5,9 @@
 
 # Agentic Specification Publication Specification
 
-Version: 6.0.3.
+Version: 6.2.1.
 Status: Standard.
-Date: 2026-07-25.
+Date: 2026-07-26.
 
 ## Abstract
 
@@ -39,101 +39,101 @@ SpecPubSpec defines a dual-purpose repository model in which the same canonical 
 
 ### Canonical Document
 
-REQ-001: The repository MUST contain a file at path `docs/seed-doc.md`.
+REQ-001: The repository MUST contain a file at path `docs/seed-doc.md`. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-002: The canonical document MUST NOT be a symbolic link.
+REQ-002: The canonical document MUST NOT be a symbolic link. Enforced by: `scripts/validate-structure.sh`.
 
 ### Content Unification
 
-REQ-003: The `site/` generation directory MUST NOT contain copies of canonical documents; the directories `site/content/` and `site/docs/` MUST NOT exist.
+REQ-003: The `site/` generation directory MUST NOT contain copies of canonical documents; the directories `site/content/` and `site/docs/` MUST NOT exist. Enforced by: `scripts/validate-structure.sh` (existence checks) and `scripts/audit-repo.sh` (reverse accounting for any other duplicate).
 
 ### Repository Metadata
 
-REQ-004: The repository MUST contain `AGENTS.md` at repository root.
+REQ-004: The repository MUST contain `AGENTS.md` at repository root. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-005: The repository MUST contain `README.md` at repository root.
+REQ-005: The repository MUST contain `README.md` at repository root. Enforced by: `scripts/validate-structure.sh`.
 
 ### Static Site Generation
 
-REQ-006: `site/lib/content.ts` MUST exist and define `CANONICAL_SOURCE_PATHS`.
+REQ-006: `site/lib/content.ts` MUST exist and define `CANONICAL_SOURCE_PATHS`. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-007: `CANONICAL_SOURCE_PATHS` MUST reference `docs/seed-doc.md`. Combined with REQ-006, this is how the site generator reads canonical documents directly from repository paths at build time rather than from a copy.
+REQ-007: `CANONICAL_SOURCE_PATHS` MUST reference `docs/seed-doc.md`. Rationale: combined with REQ-006, this is how the site generator reads canonical documents directly from repository paths at build time rather than from a copy. Enforced by: `scripts/validate-structure.sh`.
 
 ### Site Generator Core Artifacts
 
-REQ-008: The repository MUST contain `site/package.json` defining a `build` script that runs content validation before `next build`.
+REQ-008: The repository MUST contain `site/package.json` defining a `build` script. Enforced by: `scripts/validate-structure.sh` (existence only; REQ-019 verifies the script's content-validation ordering).
 
-REQ-009: The repository MUST contain `site/next.config.mjs` and `site/tsconfig.json` configuring the site generator.
+REQ-009: The repository MUST contain `site/next.config.mjs` and `site/tsconfig.json` configuring the site generator. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-010: The repository MUST contain `site/app/layout.tsx`, `site/app/page.tsx`, and `site/app/globals.css` implementing the root route that renders the canonical document; `layout.tsx` MUST import `globals.css`.
+REQ-010: The repository MUST contain `site/app/layout.tsx`, `site/app/page.tsx`, and `site/app/globals.css` implementing the root route that renders the canonical document; `layout.tsx` MUST import `globals.css`. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-011: The repository MUST contain `site/components/MarkdownPage.tsx` and `site/components/DownloadButton.tsx`, both imported by `site/app/page.tsx`, to render and offer download of the canonical document.
+REQ-011: The repository MUST contain `site/components/MarkdownPage.tsx` and `site/components/DownloadButton.tsx`, both imported by `site/app/page.tsx`. Rationale: renders and offers download of the canonical document. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-012: The repository MUST contain `site/app/favicon.ico`, serving the root route's browser tab icon.
+REQ-012: The repository MUST contain `site/app/favicon.ico`. Rationale: serves the root route's browser tab icon. Enforced by: `scripts/validate-structure.sh` (existence only).
 
 ### Continuous Integration Dependencies
 
-REQ-013: The repository MUST contain `site/package-lock.json`, since CI installs dependencies via `npm ci`, which requires an exact lockfile.
+REQ-013: The repository MUST contain `site/package-lock.json`. Rationale: CI installs dependencies via `npm ci`, which requires an exact lockfile. Enforced by: `scripts/validate-structure.sh` (existence only).
 
-REQ-014: The repository MUST contain `site/scripts/check-links.mjs`, invoked by the pull-request build-check workflow to fail on broken internal cross-references between rendered pages.
+REQ-014: The repository MUST contain `site/scripts/check-links.mjs`. Rationale: invoked by the pull-request build-check workflow to fail on broken internal cross-references between rendered pages. Enforced by: `scripts/validate-structure.sh` (existence only).
 
-REQ-015: The repository MUST contain `site/.eslintrc.json`. `next build` runs its own lint pass and fails the build on any violation of the rules this file configures; without this file present, that lint pass is silently skipped rather than falling back to a default rule set, so its absence would degrade CI without signal.
+REQ-015: The repository MUST contain `site/.eslintrc.json`. Rationale: `next build` runs its own lint pass and fails on any violation of the rules this file configures; without it, that lint pass is silently skipped rather than falling back to a default rule set, degrading CI without signal. Enforced by: `scripts/validate-structure.sh` (existence only).
 
 ### Required Directories
 
-REQ-016: The repository MUST contain the directories `docs/`, `site/`, `site/lib/`, `site/scripts/`, `.github/`, `.github/workflows/`, `scripts/`, `site/app/`, and `site/components/`. Each directory houses one or more files already mandated elsewhere in this section (see the Required Paths table below for the exact file-to-REQ mapping); this REQ additionally asserts each directory's own existence, rather than leaving it implied by its files.
+REQ-016: The repository MUST contain the directories `docs/`, `site/`, `site/lib/`, `site/scripts/`, `.github/`, `.github/workflows/`, `scripts/`, `site/app/`, and `site/components/`. Rationale: each directory houses one or more files already mandated elsewhere in this section (see the Required Paths table below for the exact file-to-REQ mapping); this REQ additionally asserts each directory's own existence, rather than leaving it implied by its files. Enforced by: `scripts/validate-structure.sh`.
 
 ### Repository-Wide Accounting
 
-REQ-017: The repository MUST contain `scripts/audit-repo.sh`, MUST be executable, and MUST fail (non-zero exit) if any file or directory on disk is not either listed in `scripts/validate-structure.sh`'s `REQUIRED_FILES`/`REQUIRED_DIRS` arrays or explicitly exempted as out-of-scope repo hygiene; `.github/workflows/governance-check.yml` MUST invoke it. This is the reverse check of the REQ items above: those ask "does every required path exist?", this asks "does every existing path have a reason to be there?".
+REQ-017: The repository MUST contain `scripts/audit-repo.sh`, MUST be executable, and MUST fail (non-zero exit) if any file or directory on disk is not either listed in `scripts/validate-structure.sh`'s `REQUIRED_FILES`/`REQUIRED_DIRS` arrays or explicitly exempted as out-of-scope repo hygiene; `.github/workflows/governance-check.yml` MUST invoke it. Rationale: this is the reverse check of the REQ items above — those ask "does every required path exist?", this asks "does every existing path have a reason to be there?" — and is what actually catches an accidental duplicate canonical document stored in a parallel location, since no independent content-diffing check exists. Enforced by: `scripts/audit-repo.sh` (self) and `.github/workflows/governance-check.yml`.
 
-### Validation
+### Content Validation
 
-REQ-018: `site/scripts/validate-content.mjs` MUST exist.
+REQ-018: `site/scripts/validate-content.mjs` MUST exist. Enforced by: `scripts/validate-structure.sh` (existence only).
 
-REQ-019: Content validation MUST execute before site generation; `site/package.json`'s `build` script MUST invoke `validate-content.mjs` (or an equivalent content-validation step) before `next build` runs, not merely define a `build` script that happens to exist.
+REQ-019: Content validation MUST execute before site generation; `site/package.json`'s `build` script MUST invoke `validate-content.mjs` (or an equivalent content-validation step) before `next build` runs, not merely define a `build` script that happens to exist. Enforced by: `scripts/validate-structure.sh` (extracts the `build` script's value and checks ordering).
 
-REQ-020: Build MUST fail if a canonical document is missing or malformed. This is enforced by `site/scripts/validate-content.mjs` (REQ-018) actually running and exiting non-zero at build time — verified when CI executes `npm run build` — not by `scripts/validate-structure.sh`, which only checks that `validate-content.mjs` exists and runs before `next build` (REQ-019), not what it decides.
+REQ-020: Build MUST fail if a canonical document is missing or malformed. Rationale: this is a build-time content guarantee, distinct from the structural existence checks elsewhere in this section. Enforced by: `site/scripts/validate-content.mjs`, exercised when CI runs `npm run build` — not `scripts/validate-structure.sh`, which per REQ-019 only checks that `validate-content.mjs` runs before `next build`, not what it decides.
 
-REQ-021: `scripts/validate-structure.sh` MUST exist and be executable.
+REQ-021: `scripts/validate-structure.sh` MUST exist and be executable. Enforced by: `.github/workflows/governance-check.yml` invoking it (REQ-035).
 
 ### Continuous Integration
 
-REQ-022: `.github/workflows/publish-site.yml` MUST exist.
+REQ-022: `.github/workflows/publish-site.yml` MUST exist. Enforced by: `scripts/validate-structure.sh` (existence only).
 
-REQ-023: Publish workflow MUST trigger on pushes to the `main` branch and deploy via a build-then-deploy job sequence.
+REQ-023: Publish workflow MUST trigger on pushes to the `main` branch and deploy via a build-then-deploy job sequence. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-024: `.github/workflows/site-build-check.yml` MUST exist.
+REQ-024: `.github/workflows/site-build-check.yml` MUST exist. Enforced by: `scripts/validate-structure.sh` (existence only).
 
-REQ-025: Build-check workflow MUST trigger on `pull_request` and MUST NOT contain a deployment step.
+REQ-025: Build-check workflow MUST trigger on `pull_request` and MUST NOT contain a deployment step. Enforced by: `scripts/validate-structure.sh`.
 
 ### Document Structure
 
-REQ-026: This canonical document MUST contain a section titled `## Core`.
+REQ-026: This canonical document MUST contain a section titled `## Core`. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-027: This canonical document MUST contain a section titled `## Repository Structure`.
+REQ-027: This canonical document MUST contain a section titled `## Repository Structure`. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-028: This canonical document MUST contain a section titled `## Version`.
+REQ-028: This canonical document MUST contain a section titled `## Version`. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-029: `AGENTS.md` MUST contain a section titled `## Repository Map`.
+REQ-029: `AGENTS.md` MUST contain a section titled `## Repository Map`. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-030: `AGENTS.md` MUST contain a section titled `## Markdown Authoring Rules`.
+REQ-030: `AGENTS.md` MUST contain a section titled `## Markdown Authoring Rules`. Enforced by: `scripts/validate-structure.sh`.
 
 ### Repository Orientation
 
-REQ-031: `QUICKSTART.md` MUST contain a section titled `## Bootstrapping Your Own Spec`, documenting how an operator forking this repo replaces the canonical content, decides whether to rename the required section headers for their domain (and updates `scripts/validate-structure.sh` accordingly if so), sets code review ownership, confirms the default branch, enables GitHub Pages, and validates conformance before publishing their own specification.
+REQ-031: `QUICKSTART.md` MUST contain a section titled `## Bootstrapping Your Own Spec`, documenting how an operator forking this repo replaces the canonical content, decides whether to rename the required section headers for their domain (and updates `scripts/validate-structure.sh` accordingly if so), sets code review ownership, confirms the default branch, enables GitHub Pages, and validates conformance before publishing their own specification. Rationale: this section serves the role of a traditional README.md for forking operators, since REQ-032 constrains `README.md` itself to be a mechanical mirror rather than free-form prose. Enforced by: `scripts/validate-structure.sh` (section-title check only; the guidance's content is not independently verified).
 
 ### README Mirror Invariant
 
-REQ-032: `README.md` MUST be generated as a byte-for-byte mirror of `docs/seed-doc.md`, MUST NOT be hand-edited, and this invariant MUST be enforced in continuous integration, which MUST fail the workflow run if drift is detected.
+REQ-032: `README.md` MUST be generated as a byte-for-byte mirror of `docs/seed-doc.md` and MUST NOT be hand-edited. Enforced by: `scripts/validate-structure.sh`, which fails the workflow run in continuous integration if drift is detected.
 
-REQ-033: `scripts/sync-readme.sh` MUST exist, MUST be executable, and MUST support a `--target-path` option for drift-checking without overwriting the checked-in `README.md`.
+REQ-033: `scripts/sync-readme.sh` MUST exist, MUST be executable, and MUST support a `--target-path` option for drift-checking without overwriting the checked-in `README.md`. Enforced by: `scripts/validate-structure.sh` (existence/executable check); REQ-032's drift check depends on the `--target-path` option.
 
 ### Governance Enforcement
 
-REQ-034: The repository MUST contain `.github/CODEOWNERS` containing at least one non-comment ownership rule requiring review of governed artifacts.
+REQ-034: The repository MUST contain `.github/CODEOWNERS` containing at least one non-comment ownership rule requiring review of governed artifacts. Enforced by: `scripts/validate-structure.sh`.
 
-REQ-035: `.github/workflows/governance-check.yml` MUST exist and MUST invoke `scripts/validate-structure.sh` on both `push` and `pull_request` triggers, so this specification's own conformance is dogfooded by CI rather than left to manual review.
+REQ-035: `.github/workflows/governance-check.yml` MUST exist and MUST invoke `scripts/validate-structure.sh` on both `push` and `pull_request` triggers. Rationale: so this specification's own conformance is dogfooded by CI rather than left to manual review. Enforced by: `scripts/validate-structure.sh` (checks the workflow file's own invocation and triggers).
 
 ---
 
@@ -141,57 +141,48 @@ REQ-035: `.github/workflows/governance-check.yml` MUST exist and MUST invoke `sc
 
 ### Required Paths
 
-The following paths are REQUIRED for conformance.
+The following paths are REQUIRED for conformance. Each path's normative requirement (and its enforcement mechanism) is stated in its own REQ in Normative Requirements above.
 
-| Path | Purpose | Requirement Links |
-|---|---|---|
-| `docs/seed-doc.md` | Canonical specification document | REQ-001, REQ-002, REQ-026, REQ-027, REQ-028 |
-| `AGENTS.md` | Repository map and authoring rules | REQ-004, REQ-029, REQ-030 |
-| `README.md` | Repository entry point; generated mirror of the canonical document | REQ-005, REQ-032 |
-| `site/lib/content.ts` | Canonical document loader | REQ-006, REQ-007 |
-| `site/scripts/validate-content.mjs` | Pre-build content validation | REQ-018, REQ-019, REQ-020 |
-| `scripts/validate-structure.sh` | Structure conformance validation | REQ-021 |
-| `.github/workflows/publish-site.yml` | Publish workflow | REQ-022, REQ-023 |
-| `.github/workflows/site-build-check.yml` | Pull-request build workflow | REQ-024, REQ-025 |
-| `QUICKSTART.md` | Repository orientation, build, and contribution guide | REQ-031 |
-| `scripts/sync-readme.sh` | Regenerates README.md as a mirror of docs/seed-doc.md | REQ-032, REQ-033 |
-| `.github/CODEOWNERS` | Review ownership of governed artifacts | REQ-034 |
-| `.github/workflows/governance-check.yml` | Dogfoods this specification's own conformance in CI | REQ-035 |
-| `site/package.json` | Site build/lint/dev script definitions | REQ-008, REQ-019 |
-| `site/next.config.mjs`, `site/tsconfig.json` | Site generator configuration | REQ-009 |
-| `site/app/layout.tsx`, `site/app/page.tsx`, `site/app/globals.css` | Root route rendering the canonical document | REQ-010 |
-| `site/components/MarkdownPage.tsx`, `site/components/DownloadButton.tsx` | Canonical document rendering and download components | REQ-011 |
-| `site/app/favicon.ico` | Root route browser tab icon | REQ-012 |
-| `site/package-lock.json` | Exact dependency lockfile required by CI's `npm ci` | REQ-013 |
-| `site/scripts/check-links.mjs` | Broken internal link check in PR build-check workflow | REQ-014 |
-| `site/.eslintrc.json` | `next build`'s lint-gate configuration | REQ-015 |
-| `scripts/audit-repo.sh` | Reverse-accounting audit: every on-disk path has a reason to exist | REQ-017 |
-| `docs/` | Canonical document directory | REQ-016 |
-| `site/` | Site generator root | REQ-016 |
-| `site/lib/` | Canonical document loader directory | REQ-016 |
-| `site/scripts/` | Site build/validation script directory | REQ-016 |
-| `.github/` | Repository governance root | REQ-016 |
-| `.github/workflows/` | CI workflow directory | REQ-016 |
-| `scripts/` | Repository conformance script directory | REQ-016 |
-| `site/app/` | Next.js app router directory | REQ-016 |
-| `site/components/` | Site rendering component directory | REQ-016 |
-
-### Forbidden Patterns
-
-1. Creating `site/content/` or `site/docs/`.
-2. Using symbolic links for canonical documents.
-3. Storing duplicate canonical content in parallel locations. Not independently checked by content-diffing; enforced as a side effect of REQ-017's exhaustive reverse-accounting audit, which fails on any on-disk path — including an accidental duplicate — that isn't a `REQUIRED_FILES`/`REQUIRED_DIRS` entry or an explicit `EXEMPT_PATHS` exemption.
-4. Hand-editing `README.md` instead of regenerating it via `scripts/sync-readme.sh`.
+```
+.github/                                Governance root
+.github/CODEOWNERS                      Review ownership
+.github/workflows/                      CI workflows
+.github/workflows/governance-check.yml  Governance CI self-check
+.github/workflows/publish-site.yml      Publish workflow
+.github/workflows/site-build-check.yml  PR build check
+AGENTS.md                               Repo map, authoring rules
+QUICKSTART.md                           Orientation & build guide
+README.md                               Generated seed-doc mirror
+docs/                                   Canonical doc directory
+docs/seed-doc.md                        Canonical specification
+scripts/                                Conformance scripts
+scripts/audit-repo.sh                   Reverse-accounting audit
+scripts/sync-readme.sh                  Regenerates README.md
+scripts/validate-structure.sh           Structure validation
+site/                                   Site generator root
+site/.eslintrc.json                     Build lint-gate config
+site/app/                               Next.js app router
+site/app/favicon.ico                    Browser tab icon
+site/app/globals.css                    Root route styles
+site/app/layout.tsx                     Root route layout
+site/app/page.tsx                       Root route page
+site/components/                        Rendering components
+site/components/DownloadButton.tsx      Doc download button
+site/components/MarkdownPage.tsx        Doc renderer
+site/lib/                               Doc loader directory
+site/lib/content.ts                     Canonical doc loader
+site/next.config.mjs                    Site generator config
+site/package-lock.json                  Exact dependency lockfile
+site/package.json                       Build/lint/dev scripts
+site/scripts/                           Build/validation scripts
+site/scripts/check-links.mjs            Broken link check
+site/scripts/validate-content.mjs       Pre-build content check
+site/tsconfig.json                      Site generator config
+```
 
 ---
 
 ## Validation
-
-Validation enforces structural and publication conformance.
-`site/scripts/validate-content.mjs` enforces REQ-018 through REQ-020.
-`scripts/validate-structure.sh` enforces repository requirements and forbidden patterns.
-
-### Validation Contract
 
 A repository claiming SpecPubSpec conformance MUST pass the following check.
 
@@ -202,16 +193,7 @@ echo $?  # MUST output 0
 
 A non-zero exit code is non-conformance.
 
-`scripts/sync-readme.sh` enforces REQ-032 and REQ-033 by regenerating `README.md` from `docs/seed-doc.md`.
-Conformance also requires a zero-diff comparison between the checked-in `README.md` and the output of `scripts/sync-readme.sh --target-path <tmp-file>`.
-A non-empty diff is non-conformance.
-
-### CI Execution Rules
-
-1. Publish workflow MUST run content validation and build before deploy.
-2. Build-check workflow MUST run validation and build on pull requests.
-3. Any validation failure MUST fail the workflow run.
-4. Any workflow validating conformance MUST fail the run if `README.md` has drifted from `docs/seed-doc.md`.
+Conformance also requires a zero-diff comparison between the checked-in `README.md` and the output of `scripts/sync-readme.sh --target-path <tmp-file>` (REQ-032, REQ-033). A non-empty diff is non-conformance.
 
 ---
 
@@ -258,6 +240,12 @@ This section intentionally does not restate the version number, to avoid the two
 | 6.0.1 | 2026-07-25 | Full review pass over the (now 35-item) REQ set found two stale cross-references left over from 6.0.0's REQ-032/REQ-034 merge: the Validation section claimed `scripts/sync-readme.sh` enforces "REQ-032 through REQ-034" (REQ-034 is CODEOWNERS, unrelated to sync-readme.sh; corrected to "REQ-032 and REQ-033"), and REQ-016's directory-to-REQ cross-reference list omitted REQ-021 (`scripts/validate-structure.sh`, which also lives in `scripts/`). Reworded REQ-016 to reference the Required Paths table instead of hardcoding a REQ-number list, since that hardcoded-list pattern is exactly what went stale here and previously in REQ-017 (fixed in 3.0.0). No REQ was added, removed, or renumbered, and no testable behavior changed; this is a PATCH |
 | 6.0.2 | 2026-07-25 | Formatting fix: inserted a blank line between every Terminology entry, same as 3.0.1's fix for the Normative Requirements section. Consecutive lines with no blank line between them collapse into a single run-on paragraph under CommonMark (the site's rendering pipeline), making the Terminology section hard for a human to scan; each term now renders as its own paragraph. No wording, numbering, or conformance semantics changed |
 | 6.0.3 | 2026-07-25 | Formatting fix: reordered the Terminology section's entries alphabetically (Agent, Atomic publication, Canonical document, Conformant repository, Dual-purpose repository, README mirror), previously listed in ad hoc addition order. No wording, numbering, or conformance semantics changed |
+| 6.0.4 | 2026-07-26 | Wording clarification: REQ-031 now notes that `QUICKSTART.md`'s Bootstrapping Your Own Spec section serves the role of a traditional README.md for forking operators, alongside its existing documentation requirements. No REQ was added, removed, or renumbered, and no testable behavior changed; this is a PATCH |
+| 6.1.0 | 2026-07-26 | Standardized every REQ's prose into a consistent tight format: a single normative MUST-sentence, followed by an optional "Rationale: ..." clause (only where a non-obvious "why" exists) and an "Enforced by: ..." clause naming the concrete script/workflow that checks it. Previously, some REQs mixed inline rationale into the normative sentence while others carried no enforcement pointer at all, an inconsistency this pass removes. Also deduplicated REQ-008 and REQ-019, which both claimed the `build` script's content-validation ordering; REQ-008 now states only the script's existence, leaving the ordering claim solely to REQ-019 (already the REQ that `scripts/validate-structure.sh` actually checks it against). No REQ was added, removed, or renumbered, and no conformance semantics or script behavior changed; this is a MINOR clarification per this document's own versioning policy |
+| 6.1.1 | 2026-07-26 | Trimmed redundant non-normative prose made obsolete by 6.1.0's per-REQ "Enforced by:" clauses: removed the `## Validation` section's summary sentences restating which script enforces which REQ (now stated once, per-REQ), removed the `### CI Execution Rules` subsection (its 4 rules were pure restatements of REQ-019/REQ-020/REQ-023/REQ-025/REQ-032 with no independent testable content — the same category of non-normative restatement removed from the REQ set itself in 3.0.0/4.0.0/5.0.0), and removed the `### Forbidden Patterns` subsection (items 1, 2, and 4 restated REQ-003/REQ-002/REQ-032's MUST NOT clauses verbatim; item 3's unique framing was folded into REQ-017's Rationale instead). No REQ was added, removed, or renumbered, no script behavior changed, and every removed sentence's testable content already exists verbatim in a REQ; this is a PATCH |
+| 6.1.2 | 2026-07-26 | Renamed the `### Validation` subsection under Normative Requirements (covering REQ-018 through REQ-021) to `### Content Validation`, resolving a same-title collision with the unrelated top-level `## Validation` section. No REQ was added, removed, or renumbered, no script behavior changed (no validate-structure.sh check greps for either heading); this is a PATCH |
+| 6.2.0 | 2026-07-26 | Cosmetic overhaul of the Required Paths listing: replaced the 3-column markdown table (Path / Purpose / Requirement Links) with a single fenced, alphabetically-sorted, `ls -l`-style plain-text listing of every required path and its purpose; multi-file table rows (e.g. layout.tsx/page.tsx/globals.css) were split into one line per file for a flat, scannable listing. Dropped the per-path "Requirement Links" column: each path's owning REQ(s), and that REQ's own enforcement mechanism, are already stated once in the REQ's own text (per 6.1.0's "Enforced by:" clause), so the table's reverse-index was a redundant cross-reference rather than unique information. No REQ was added, removed, or renumbered, no script behavior changed (no validate-structure.sh check parses this listing's format); this is a MINOR clarification per this document's own versioning policy |
+| 6.2.1 | 2026-07-26 | Shortened the per-path purpose text in the Required Paths listing (longest line 91 chars to 65 chars) so it renders without a horizontal scrollbar in the site's content column. Wording-only trim, no path added/removed/reordered, no REQ or script behavior changed; this is a PATCH |
 
 Version policy.
 MAJOR increments change conformance semantics.

@@ -16,6 +16,26 @@ import rehypeStringify from 'rehype-stringify';
  */
 const REPO_ROOT = path.resolve(process.cwd(), '..');
 
+/**
+ * Single source of truth for the canonical document's repository-relative
+ * path: the SPEC_PATH variable defined once in scripts/validate-structure.sh
+ * (parsed here as plain text rather than duplicated as a literal). A
+ * fork/clone renames its canonical document (e.g. docs/seed-doc.md ->
+ * docs/my-test-spec.md) by editing that one variable; nothing here or in
+ * site/scripts/validate-content.mjs needs a matching literal-path edit.
+ */
+function readSpecPath(): string {
+  const scriptPath = path.join(REPO_ROOT, 'scripts/validate-structure.sh');
+  const script = fs.readFileSync(scriptPath, 'utf-8');
+  const match = script.match(/^SPEC_PATH="([^"]+)"/m);
+  if (!match) {
+    throw new Error(
+      `Could not find SPEC_PATH="..." in ${scriptPath}`
+    );
+  }
+  return match[1];
+}
+
 export type ValidationState = 'valid' | 'missing' | 'malformed';
 
 export interface CanonicalDocument {
@@ -32,7 +52,7 @@ export interface CanonicalDocument {
  * Keys are repo-relative source paths (data-model.md `source_path` field).
  */
 export const CANONICAL_SOURCE_PATHS = {
-  seedDoc: 'docs/seed-doc.md',
+  seedDoc: readSpecPath(),
 } as const;
 
 function resolveRepoPath(relativePath: string): string {

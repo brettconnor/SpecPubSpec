@@ -10,9 +10,16 @@ set -euo pipefail
 REPO_ROOT="${REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$REPO_ROOT"
 
+# Single source of truth for the canonical document's repository-relative
+# path, so a fork/clone can rename docs/seed-doc.md by editing this one
+# variable (see site/lib/content.ts and site/scripts/validate-content.mjs,
+# which parse this same line as plain text) instead of updating a literal
+# path in multiple places across bash and Node.
+SPEC_PATH="docs/seed-doc.md"
+
 # Required files for minimal SpecPubSpec conformance
 REQUIRED_FILES=(
-  "docs/seed-doc.md"
+  "$SPEC_PATH"
   "AGENTS.md"
   "README.md"
   "site/lib/content.ts"
@@ -61,7 +68,7 @@ REQUIRED_DIRS=(
 
 # Files that must not be symlinks (canonical documents)
 NO_SYMLINK_FILES=(
-  "docs/seed-doc.md"
+  "$SPEC_PATH"
   "AGENTS.md"
   "README.md"
 )
@@ -109,12 +116,12 @@ for file in "${REQUIRED_EXECUTABLE_FILES[@]}"; do
   fi
 done
 
-# Validate README.md has zero drift from docs/seed-doc.md (REQ-032)
+# Validate README.md has zero drift from the canonical document (REQ-032)
 if [ -f scripts/sync-readme.sh ] && [ -f README.md ]; then
   tmp_readme="$(mktemp)"
   if scripts/sync-readme.sh --target-path "$tmp_readme" >/dev/null; then
     if ! diff -q README.md "$tmp_readme" >/dev/null; then
-      echo "FAIL: README.md has drifted from docs/seed-doc.md; run scripts/sync-readme.sh" >&2
+      echo "FAIL: README.md has drifted from $SPEC_PATH; run scripts/sync-readme.sh" >&2
       fail=1
     fi
   else
@@ -124,16 +131,16 @@ if [ -f scripts/sync-readme.sh ] && [ -f README.md ]; then
   rm -f "$tmp_readme"
 fi
 
-# Validate docs/seed-doc.md has required sections
-if [ -f docs/seed-doc.md ]; then
+# Validate the canonical document has required sections
+if [ -f "$SPEC_PATH" ]; then
   for section in "## Core" "## Repository Structure" "## Version"; do
-    if ! grep -qF "$section" docs/seed-doc.md; then
-      echo "FAIL: docs/seed-doc.md missing required section: $section" >&2
+    if ! grep -qF "$section" "$SPEC_PATH"; then
+      echo "FAIL: $SPEC_PATH missing required section: $section" >&2
       fail=1
     fi
   done
 else
-  echo "FAIL: canonical document docs/seed-doc.md does not exist" >&2
+  echo "FAIL: canonical document $SPEC_PATH does not exist" >&2
   fail=1
 fi
 
@@ -167,8 +174,8 @@ if [ -f site/lib/content.ts ]; then
     echo "FAIL: site/lib/content.ts must define CANONICAL_SOURCE_PATHS" >&2
     fail=1
   fi
-  if ! grep -q "docs/seed-doc.md" site/lib/content.ts; then
-    echo "FAIL: site/lib/content.ts must reference docs/seed-doc.md" >&2
+  if ! grep -q "validate-structure.sh" site/lib/content.ts; then
+    echo "FAIL: site/lib/content.ts must derive its canonical path from scripts/validate-structure.sh's SPEC_PATH" >&2
     fail=1
   fi
 fi

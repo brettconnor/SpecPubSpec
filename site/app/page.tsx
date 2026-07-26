@@ -1,6 +1,7 @@
 import MarkdownPage from '../components/MarkdownPage';
 import DownloadButton from '../components/DownloadButton';
 import { loadSeedDoc } from '../lib/content';
+import path from 'node:path';
 
 /**
  * Single-page site: an intro blurb followed by the one canonical document
@@ -16,7 +17,7 @@ export default async function HomePage() {
     <main className="page-content">
       <DownloadButton 
         content={seedDoc.rawMarkdown}
-        filename="seed-doc.md"
+        filename={path.basename(seedDoc.sourcePath)}
       />
       <MarkdownPage
         html={seedDoc.html}
