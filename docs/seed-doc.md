@@ -1,6 +1,6 @@
 # Agentic Specification Publication Specification
 
-Version: 6.0.1.
+Version: 6.0.2.
 Status: Standard.
 Date: 2026-07-25.
 
@@ -213,10 +213,15 @@ A non-empty diff is non-conformance.
 ## Terminology
 
 Agent: An autonomous coding system that reads and applies repository specifications.
+
 Canonical document: The single authoritative specification file at `docs/seed-doc.md`.
+
 Dual-purpose repository: A repository that serves machine-readable source and human-rendered documentation from one source.
+
 Conformant repository: A repository that satisfies REQ-001 through REQ-035 and passes section 6 validation.
+
 README mirror: The invariant that `README.md` is a byte-for-byte regenerated copy of `docs/seed-doc.md`, produced by `scripts/sync-readme.sh` and never hand-edited.
+
 Atomic publication: A publish model where partial deployment is impossible.
 
 ---
@@ -246,6 +251,7 @@ This section intentionally does not restate the version number, to avoid the two
 | 5.0.0 | 2026-07-25 | Removed old REQ-031 ("the repository MUST contain QUICKSTART.md at repository root documenting repository orientation, build instructions, and contribution guidance"): its file-existence claim was already redundant with QUICKSTART.md's entry in validate-structure.sh's REQUIRED_FILES array, and its "documenting orientation, build instructions, and contribution guidance" clause was never content-checked by any script — an untestable prose restatement of the same non-normative pattern removed in 3.0.0. Its concrete, testable successor, old REQ-032 (QUICKSTART.md MUST contain a `## Bootstrapping Your Own Spec` section, which validate-structure.sh does grep for), already subsumes it. Renumbered old REQ-032 through REQ-037 down to REQ-031 through REQ-036 to close the gap. This is a MAJOR change: every REQ-NNN identifier from old REQ-032 onward shifted down by one |
 | 6.0.0 | 2026-07-25 | Merged old REQ-032 ("README.md MUST be generated as a byte-for-byte mirror of docs/seed-doc.md and MUST NOT be hand-edited") and old REQ-034 ("continuous integration MUST verify README.md has zero drift from docs/seed-doc.md and MUST fail the workflow run if drift is detected") into one requirement: both were enforced by the exact same drift-check code in scripts/validate-structure.sh, making them duplicate REQ numbers for a single check rather than two independently testable requirements. New REQ-032 states the mirror invariant and its CI-enforcement in one sentence. Renumbered old REQ-033 (sync-readme.sh script requirement) to REQ-033 (unchanged position, now directly following the merged REQ-032), and old REQ-035/REQ-036 (CODEOWNERS, governance-check.yml) down to REQ-034/REQ-035. This is a MAJOR change: every REQ-NNN identifier from old REQ-034 onward shifted down by one, and old REQ-034 no longer exists as a separate identifier |
 | 6.0.1 | 2026-07-25 | Full review pass over the (now 35-item) REQ set found two stale cross-references left over from 6.0.0's REQ-032/REQ-034 merge: the Validation section claimed `scripts/sync-readme.sh` enforces "REQ-032 through REQ-034" (REQ-034 is CODEOWNERS, unrelated to sync-readme.sh; corrected to "REQ-032 and REQ-033"), and REQ-016's directory-to-REQ cross-reference list omitted REQ-021 (`scripts/validate-structure.sh`, which also lives in `scripts/`). Reworded REQ-016 to reference the Required Paths table instead of hardcoding a REQ-number list, since that hardcoded-list pattern is exactly what went stale here and previously in REQ-017 (fixed in 3.0.0). No REQ was added, removed, or renumbered, and no testable behavior changed; this is a PATCH |
+| 6.0.2 | 2026-07-25 | Formatting fix: inserted a blank line between every Terminology entry, same as 3.0.1's fix for the Normative Requirements section. Consecutive lines with no blank line between them collapse into a single run-on paragraph under CommonMark (the site's rendering pipeline), making the Terminology section hard for a human to scan; each term now renders as its own paragraph. No wording, numbering, or conformance semantics changed |
 
 Version policy.
 MAJOR increments change conformance semantics.
