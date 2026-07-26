@@ -14,5 +14,5 @@ jobs:
       - name: Validate SpecPubSpec conformance (dogfood docs/seed-doc.md's full normative requirement set)
         run: bash scripts/validate-structure.sh
 
-      - name: Audit repository for unaccounted-for files and directories (REQ-044)
+      - name: Audit repository for unaccounted-for files and directories (REQ-017)
         run: bash scripts/audit-repo.sh

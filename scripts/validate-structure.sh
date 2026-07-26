@@ -39,7 +39,7 @@ REQUIRED_FILES=(
   "scripts/audit-repo.sh"
 )
 
-# Files that must be executable (REQ-030, REQ-044)
+# Files that must be executable (REQ-035, REQ-017)
 REQUIRED_EXECUTABLE_FILES=(
   "scripts/sync-readme.sh"
   "scripts/validate-structure.sh"
@@ -101,7 +101,7 @@ for file in "${NO_SYMLINK_FILES[@]}"; do
   fi
 done
 
-# Validate required scripts are executable (REQ-030)
+# Validate required scripts are executable (REQ-035)
 for file in "${REQUIRED_EXECUTABLE_FILES[@]}"; do
   if [ -e "$file" ] && [ ! -x "$file" ]; then
     echo "FAIL: required script is not executable: $file" >&2
@@ -109,7 +109,7 @@ for file in "${REQUIRED_EXECUTABLE_FILES[@]}"; do
   fi
 done
 
-# Validate README.md has zero drift from docs/seed-doc.md (REQ-029, REQ-031)
+# Validate README.md has zero drift from docs/seed-doc.md (REQ-034, REQ-036)
 if [ -f scripts/sync-readme.sh ] && [ -f README.md ]; then
   tmp_readme="$(mktemp)"
   if scripts/sync-readme.sh --target-path "$tmp_readme" >/dev/null; then
@@ -150,7 +150,7 @@ else
   fail=1
 fi
 
-# Validate QUICKSTART.md has required sections (REQ-043)
+# Validate QUICKSTART.md has required sections (REQ-033)
 if [ -f QUICKSTART.md ]; then
   if ! grep -qF "## Bootstrapping Your Own Spec" QUICKSTART.md; then
     echo "FAIL: QUICKSTART.md missing required section: ## Bootstrapping Your Own Spec" >&2
@@ -184,7 +184,7 @@ if [ -d site/docs ]; then
   fail=1
 fi
 
-# Validate site generator core artifacts wire together (REQ-034 through REQ-037)
+# Validate site generator core artifacts wire together (REQ-008 through REQ-011)
 if [ -f site/package.json ]; then
   if ! grep -q '"build"' site/package.json; then
     echo "FAIL: site/package.json must define a build script" >&2
@@ -210,7 +210,59 @@ if [ -f site/app/page.tsx ]; then
   fi
 fi
 
-# Validate governance-check.yml dogfoods this specification's own conformance (REQ-033)
+# Validate content validation runs before site generation, not merely that a
+# build script happens to exist (REQ-019). Extracts the literal "build" script
+# value from package.json and checks that a validate-content invocation
+# appears textually before "next build" within it.
+if [ -f site/package.json ]; then
+  build_script="$(grep -o '"build"[[:space:]]*:[[:space:]]*"[^"]*"' site/package.json | sed -E 's/.*: *"(.*)"/\1/')"
+  if [[ "$build_script" != *"next build"* ]]; then
+    echo "FAIL: site/package.json's build script must invoke next build" >&2
+    fail=1
+  elif [[ "$build_script" != *"validate-content"* ]]; then
+    echo "FAIL: site/package.json's build script must invoke validate-content.mjs before next build" >&2
+    fail=1
+  else
+    before_next_build="${build_script%%next build*}"
+    if [[ "$before_next_build" != *"validate-content"* ]]; then
+      echo "FAIL: site/package.json's build script must run validate-content.mjs before next build, not after" >&2
+      fail=1
+    fi
+  fi
+fi
+
+# Validate publish-site.yml triggers on pushes to main (REQ-024)
+if [ -f .github/workflows/publish-site.yml ]; then
+  if ! grep -q "^  push:" .github/workflows/publish-site.yml; then
+    echo "FAIL: .github/workflows/publish-site.yml must trigger on push" >&2
+    fail=1
+  elif ! grep -A5 "^  push:" .github/workflows/publish-site.yml | grep -q "main"; then
+    echo "FAIL: .github/workflows/publish-site.yml's push trigger must target the main branch" >&2
+    fail=1
+  fi
+fi
+
+# Validate site-build-check.yml triggers on pull_request and never deploys (REQ-026)
+if [ -f .github/workflows/site-build-check.yml ]; then
+  if ! grep -q "pull_request:" .github/workflows/site-build-check.yml; then
+    echo "FAIL: .github/workflows/site-build-check.yml must trigger on pull_request" >&2
+    fail=1
+  fi
+  if grep -qiE "deploy-pages|actions/deploy" .github/workflows/site-build-check.yml; then
+    echo "FAIL: .github/workflows/site-build-check.yml must not contain a deployment step" >&2
+    fail=1
+  fi
+fi
+
+# Validate CODEOWNERS contains at least one non-comment ownership rule (REQ-037)
+if [ -f .github/CODEOWNERS ]; then
+  if ! grep -vE '^[[:space:]]*(#.*)?$' .github/CODEOWNERS | grep -q .; then
+    echo "FAIL: .github/CODEOWNERS must contain at least one non-comment ownership rule" >&2
+    fail=1
+  fi
+fi
+
+# Validate governance-check.yml dogfoods this specification's own conformance (REQ-038)
 if [ -f .github/workflows/governance-check.yml ]; then
   if ! grep -q "validate-structure.sh" .github/workflows/governance-check.yml; then
     echo "FAIL: .github/workflows/governance-check.yml must invoke scripts/validate-structure.sh" >&2
