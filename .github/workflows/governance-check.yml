@@ -1,0 +1,18 @@
+name: Governance Check
+
+on:
+  push: {}
+  pull_request: {}
+
+jobs:
+  governance-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate SpecPubSpec structural conformance for docs/seed-doc.md
+        run: bash scripts/validate-structure.sh
+
+      - name: Audit repository for unaccounted-for files and directories
+        run: bash scripts/audit-repo.sh

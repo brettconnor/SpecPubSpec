@@ -1,0 +1,37 @@
+name: Site build check
+
+# T020: PR-only build+link check, no deploy. Gives contributors a preview
+# signal on any change touching the canonical docs or the site itself
+# (spec.md User Story 3, FR-006, SC-004).
+on:
+  pull_request:
+    paths:
+      - 'site/**'
+      - 'docs/**'
+      - 'scripts/validate-structure.sh'
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Build (includes validate-content gate)
+        working-directory: site
+        run: npm run build
+
+      # T021: fail the check on any broken internal cross-reference between
+      # rendered pages (spec.md Edge Cases).
+      - name: Check internal links
+        working-directory: site
+        run: node scripts/check-links.mjs
