@@ -68,7 +68,12 @@ function getLastModified(relativePath: string): string | null {
     const output = execFileSync(
       'git',
       ['log', '-1', '--format=%cI', '--', relativePath],
-      { cwd: REPO_ROOT, encoding: 'utf-8' }
+      {
+        cwd: REPO_ROOT,
+        encoding: 'utf-8',
+        // Avoid noisy stderr in runtime environments without .git history.
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }
     ).trim();
     return output.length > 0 ? output : null;
   } catch {
